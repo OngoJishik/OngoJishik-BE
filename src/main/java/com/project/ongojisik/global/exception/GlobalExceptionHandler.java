@@ -27,7 +27,12 @@ public class GlobalExceptionHandler {
             HttpServletRequest request
     ) {
         FieldError fieldError = exception.getBindingResult().getFieldError();
-        String message = fieldError != null ? fieldError.getDefaultMessage() : ErrorCode.VALIDATION_FAILED.getMessage();
+        String message;
+        if (fieldError != null) {
+            message = fieldError.getDefaultMessage();
+        } else {
+            message = ErrorCode.VALIDATION_FAILED.getMessage();
+        }
 
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse(

@@ -17,8 +17,8 @@ public enum ErrorCode {
     TOKEN_INVALID(401, "TOKEN_INVALID", "토큰이 유효하지 않습니다."),
     ACCESS_TOKEN_INVALID(401, "ACCESS_TOKEN_INVALID", "액세스 토큰이 유효하지 않습니다."),
     REFRESH_TOKEN_INVALID(401, "REFRESH_TOKEN_INVALID", "리프레시 토큰이 유효하지 않습니다."),
-    GOOGLE_INVALID_TOKEN(401, "GOOGLE_INVALID_TOKEN", "유효하지 않은 Google ID 토큰입니다."),
-    GOOGLE_ACCOUNT_INFO_INVALID(401, "GOOGLE_ACCOUNT_INFO_INVALID", "Google 계정 정보가 유효하지 않습니다."),
+    GOOGLE_INVALID_TOKEN(401, "GOOGLE_INVALID_TOKEN", "유효하지 않은 구글 ID 토큰입니다."),
+    GOOGLE_ACCOUNT_INFO_INVALID(401, "GOOGLE_ACCOUNT_INFO_INVALID", "구글 계정 정보가 유효하지 않습니다."),
 
     // 403 오류
     FORBIDDEN(403, "FORBIDDEN", "접근 권한이 없습니다."),
@@ -32,8 +32,8 @@ public enum ErrorCode {
     METHOD_NOT_ALLOWED(405, "METHOD_NOT_ALLOWED", "허용되지 않은 HTTP 메서드입니다."),
 
     //500 오류
-    GOOGLE_CLIENT_ID_NOT_CONFIGURED(500, "GOOGLE_CLIENT_ID_NOT_CONFIGURED", "Google OAuth client id가 설정되지 않았습니다."),
-    GOOGLE_TOKEN_VERIFICATION_FAILED(500, "GOOGLE_TOKEN_VERIFICATION_FAILED", "Google 토큰 검증 중 오류가 발생했습니다."),
+    GOOGLE_CLIENT_ID_NOT_CONFIGURED(500, "GOOGLE_CLIENT_ID_NOT_CONFIGURED", "구글 OAuth 클라이언트 ID가 설정되지 않았습니다."),
+    GOOGLE_TOKEN_VERIFICATION_FAILED(500, "GOOGLE_TOKEN_VERIFICATION_FAILED", "구글 토큰 검증 중 오류가 발생했습니다."),
     INTERNAL_SERVER_ERROR(500, "INTERNAL_SERVER_ERROR", "서버 내부 오류가 발생했습니다."),
     UNKNOWN_ERROR(500, "UNKNOWN_ERROR", "예기치 못한 오류가 발생했습니다.");
 
