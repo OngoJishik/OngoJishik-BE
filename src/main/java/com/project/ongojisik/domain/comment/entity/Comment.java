@@ -3,6 +3,8 @@ package com.project.ongojisik.domain.comment.entity;
 import com.project.ongojisik.domain.board.entity.Board;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -17,16 +19,17 @@ import lombok.NoArgsConstructor;
 public class Comment {
 
     @Id
-    @Column(name = "commentId", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "comment_id", nullable = false)
     private Long commentId;
 
     @ManyToOne
-    @JoinColumn(name = "boardId", nullable = false)
+    @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
-    @Column(name = "commentComtent")
+    @Column(name = "comment_content")
     private String commentContent;
 
-    @Column(name = "Field")
-    private String field;
+    @Column(name = "author_name")
+    private String authorName;
 }

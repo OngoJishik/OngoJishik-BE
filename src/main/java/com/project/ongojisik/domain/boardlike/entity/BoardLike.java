@@ -3,6 +3,8 @@ package com.project.ongojisik.domain.boardlike.entity;
 import com.project.ongojisik.domain.board.entity.Board;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -17,10 +19,11 @@ import lombok.NoArgsConstructor;
 public class BoardLike {
 
     @Id
-    @Column(name = "boardLikeId", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "board_like_id", nullable = false)
     private Long boardLikeId;
 
     @ManyToOne
-    @JoinColumn(name = "boardId", nullable = false)
+    @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 }

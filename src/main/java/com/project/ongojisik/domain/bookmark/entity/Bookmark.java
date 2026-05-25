@@ -3,6 +3,8 @@ package com.project.ongojisik.domain.bookmark.entity;
 import com.project.ongojisik.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -17,10 +19,11 @@ import lombok.NoArgsConstructor;
 public class Bookmark {
 
     @Id
-    @Column(name = "bookmarkId", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "bookmark_id", nullable = false)
     private Long bookmarkId;
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }
