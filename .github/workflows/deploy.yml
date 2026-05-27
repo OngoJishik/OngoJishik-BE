@@ -52,4 +52,4 @@ jobs:
             ./gradlew build -x test --no-daemon
 
             # Spring 서버 실행
-           sudo systemctl restart ongojisik
+            sudo systemctl restart ongojisik
