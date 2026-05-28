@@ -4,6 +4,8 @@ import com.project.ongojisik.domain.bookmark.entity.Bookmark;
 import com.project.ongojisik.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -18,27 +20,28 @@ import lombok.NoArgsConstructor;
 public class Analysis {
 
     @Id
-    @Column(name = "analysisId", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "analysis_id", nullable = false)
     private Long analysisId;
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "bookmarkId", nullable = false)
+    @JoinColumn(name = "bookmark_id", nullable = false)
     private Bookmark bookmark;
 
-    @Column(name = "analysisPicture")
+    @Column(name = "analysis_picture")
     private String analysisPicture;
 
     @Column(name = "category")
     private String category;
 
-    @Column(name = "foodName")
+    @Column(name = "food_name")
     private String foodName;
 
-    @Column(name = "foodContent")
+    @Column(name = "food_content")
     private String foodContent;
 
     @Column(name = "recipe")
@@ -47,6 +50,6 @@ public class Analysis {
     @Column(name = "ingredient")
     private String ingredient;
 
-    @Column(name = "Field")
-    private String field;
+    @Column(name = "memo")
+    private String memo;
 }
