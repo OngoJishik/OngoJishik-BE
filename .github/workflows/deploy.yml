@@ -35,7 +35,7 @@ jobs:
           script: |
             set -e
 
-            cd ~/OngoJisik-BE
+            cd ./OngoJisik-BE
 
             git fetch origin
             git reset --hard origin/main
