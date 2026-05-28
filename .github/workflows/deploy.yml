@@ -34,9 +34,14 @@ jobs:
 
           script: |
             set -e
-            cd /home/ubuntu/OngoJisik-BE
+
+            cd ~/OngoJisik-BE
+
             git fetch origin
             git reset --hard origin/main
+
             chmod +x gradlew
+
             ./gradlew build -x test --no-daemon
+
             sudo systemctl restart ongojisik
