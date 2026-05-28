@@ -34,7 +34,7 @@ jobs:
 
           script: |
             set -e
-            cd ~/OngoJisik-BE
+            cd /home/ubuntu/OngoJisik-BE
             git fetch origin
             git reset --hard origin/main
             chmod +x gradlew
