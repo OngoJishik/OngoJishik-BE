@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor
-@Table(name = "즐겨찾기")
+@Table(name = "bookmarks")
 public class Bookmark {
 
     @Id

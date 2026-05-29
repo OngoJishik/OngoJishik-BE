@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor
-@Table(name = "게시판 좋아요")
+@Table(name = "board_likes")
 public class BoardLike {
 
     @Id
