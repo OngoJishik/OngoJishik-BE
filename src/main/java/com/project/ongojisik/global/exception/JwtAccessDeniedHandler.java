@@ -1,5 +1,6 @@
 package com.project.ongojisik.global.exception;
 
+import com.project.ongojisik.global.response.ApiResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,6 +27,6 @@ public class JwtAccessDeniedHandler implements AccessDeniedHandler {
         response.setStatus(ErrorCode.ACCESS_DENIED.getActualStatusCode());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
-        objectMapper.writeValue(response.getWriter(), ErrorResponse.from(ErrorCode.ACCESS_DENIED, request.getRequestURI()));
+        objectMapper.writeValue(response.getWriter(), ApiResponse.fail(ErrorCode.ACCESS_DENIED.getCode(), ErrorCode.ACCESS_DENIED.getMessage()));
     }
 }
