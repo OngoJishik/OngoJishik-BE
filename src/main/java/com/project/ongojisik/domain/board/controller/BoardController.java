@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,7 +49,7 @@ public class BoardController {
     @Operation(summary = "게시글 제목 검색", description = "제목에 포함된 문자열로 게시글을 검색합니다.")
     @GetMapping("/search")
     public ApiResponse<Page<BoardSummaryResponse>> searchBoards(
-            @org.springframework.web.bind.annotation.RequestParam String title,
+            @RequestParam String title,
             @PageableDefault(size = 10, sort = "createdAt", direction = Direction.DESC) Pageable pageable
     ) {
         return ApiResponse.success(boardService.searchBoardsByTitle(title, pageable));
