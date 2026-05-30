@@ -1,5 +1,6 @@
 package com.project.ongojisik.global.exception;
 
+import com.project.ongojisik.global.response.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -16,13 +17,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomException.class)
-    public ResponseEntity<ErrorResponse> handleCustomException(CustomException exception, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<Void>> handleCustomException(CustomException exception, HttpServletRequest request) {
         return ResponseEntity.status(exception.getStatusCode())
-                .body(ErrorResponse.from(exception.getErrorCode(), request.getRequestURI()));
+                .body(ApiResponse.fail(exception.getErrorCode().getCode(), exception.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValid(
+    public ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValid(
             MethodArgumentNotValidException exception,
             HttpServletRequest request
     ) {
@@ -35,13 +36,7 @@ public class GlobalExceptionHandler {
         }
 
         return ResponseEntity.badRequest()
-                .body(new ErrorResponse(
-                        ErrorCode.VALIDATION_FAILED.getActualStatusCode(),
-                        ErrorCode.VALIDATION_FAILED.getCode(),
-                        message,
-                        request.getRequestURI(),
-                        java.time.LocalDateTime.now()
-                ));
+                .body(ApiResponse.fail(ErrorCode.VALIDATION_FAILED.getCode(), message));
     }
 
     @ExceptionHandler({
@@ -49,32 +44,32 @@ public class GlobalExceptionHandler {
             ConstraintViolationException.class,
             IllegalArgumentException.class
     })
-    public ResponseEntity<ErrorResponse> handleBadRequest(Exception exception, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<Void>> handleBadRequest(Exception exception, HttpServletRequest request) {
         return ResponseEntity.badRequest()
-                .body(ErrorResponse.from(ErrorCode.INVALID_INPUT_VALUE, request.getRequestURI()));
+                .body(ApiResponse.fail(ErrorCode.INVALID_INPUT_VALUE.getCode(), ErrorCode.INVALID_INPUT_VALUE.getMessage()));
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ErrorResponse> handleMethodNotAllowed(
+    public ResponseEntity<ApiResponse<Void>> handleMethodNotAllowed(
             HttpRequestMethodNotSupportedException exception,
             HttpServletRequest request
     ) {
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
-                .body(ErrorResponse.from(ErrorCode.METHOD_NOT_ALLOWED, request.getRequestURI()));
+                .body(ApiResponse.fail(ErrorCode.METHOD_NOT_ALLOWED.getCode(), ErrorCode.METHOD_NOT_ALLOWED.getMessage()));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleAccessDenied(
+    public ResponseEntity<ApiResponse<Void>> handleAccessDenied(
             AccessDeniedException exception,
             HttpServletRequest request
     ) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(ErrorResponse.from(ErrorCode.ACCESS_DENIED, request.getRequestURI()));
+                .body(ApiResponse.fail(ErrorCode.ACCESS_DENIED.getCode(), ErrorCode.ACCESS_DENIED.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(Exception exception, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<Void>> handleException(Exception exception, HttpServletRequest request) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ErrorResponse.from(ErrorCode.INTERNAL_SERVER_ERROR, request.getRequestURI()));
+                .body(ApiResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR.getCode(), ErrorCode.INTERNAL_SERVER_ERROR.getMessage()));
     }
 }
