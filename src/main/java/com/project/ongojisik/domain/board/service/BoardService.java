@@ -39,6 +39,16 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
+    public Page<BoardSummaryResponse> searchBoardsByTitle(String title, Pageable pageable) {
+        if (title == null || title.isBlank()) {
+            throw new APIException(ErrorCode.INVALID_INPUT_VALUE);
+        }
+
+        return boardRepository.findByTitleContainingIgnoreCase(title, pageable)
+                .map(BoardSummaryResponse::from);
+    }
+
+    @Transactional(readOnly = true)
     public BoardResponse getBoard(Long boardId) {
         return BoardResponse.from(findBoard(boardId));
     }

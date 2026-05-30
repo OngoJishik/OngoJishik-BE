@@ -45,6 +45,15 @@ public class BoardController {
         return ApiResponse.success(boardService.getBoardList(pageable));
     }
 
+    @Operation(summary = "게시글 제목 검색", description = "제목에 포함된 문자열로 게시글을 검색합니다.")
+    @GetMapping("/search")
+    public ApiResponse<Page<BoardSummaryResponse>> searchBoards(
+            @org.springframework.web.bind.annotation.RequestParam String title,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Direction.DESC) Pageable pageable
+    ) {
+        return ApiResponse.success(boardService.searchBoardsByTitle(title, pageable));
+    }
+
     @Operation(summary = "게시글 상세 조회", description = "게시글 ID로 단건 조회합니다.")
     @GetMapping("/{boardId}")
     public ApiResponse<BoardResponse> getBoard(@PathVariable Long boardId) {
