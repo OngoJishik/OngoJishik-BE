@@ -16,7 +16,6 @@ import com.project.ongojisik.domain.user.repository.UserRepository;
 import com.project.ongojisik.global.exception.APIException;
 import com.project.ongojisik.global.exception.ErrorCode;
 import java.util.Optional;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,10 +25,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.util.ReflectionTestUtils;
-import java.util.Collections;
 
 @ExtendWith(MockitoExtension.class)
 class BoardServiceTest {
@@ -47,11 +43,6 @@ class BoardServiceTest {
         boardService = new BoardService(boardRepository, userRepository);
     }
 
-    @AfterEach
-    void tearDown() {
-        SecurityContextHolder.clearContext();
-    }
-
     @Test
     void createBoardCreatesBoardForCurrentUser() {
         User user = User.create("google-123", "user@gmail.com", "테스터");
@@ -59,13 +50,10 @@ class BoardServiceTest {
         Board savedBoard = Board.create(user, "제목", "내용", "image.png");
         ReflectionTestUtils.setField(savedBoard, "boardId", 10L);
 
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken("1", null, Collections.emptyList())
-        );
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(boardRepository.save(any(Board.class))).thenReturn(savedBoard);
 
-        BoardResponse response = boardService.createBoard(new BoardCreateRequest("제목", "내용", "image.png"));
+        BoardResponse response = boardService.createBoard(1L, new BoardCreateRequest("제목", "내용", "image.png"));
 
         assertThat(response.boardId()).isEqualTo(10L);
         assertThat(response.title()).isEqualTo("제목");
@@ -125,12 +113,9 @@ class BoardServiceTest {
         Board board = Board.create(owner, "제목", "내용", null);
         ReflectionTestUtils.setField(board, "boardId", 10L);
 
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken("2", null, Collections.emptyList())
-        );
         when(boardRepository.findById(10L)).thenReturn(Optional.of(board));
 
-        assertThatThrownBy(() -> boardService.updateBoard(10L, new BoardUpdateRequest("수정", "수정내용", null)))
+        assertThatThrownBy(() -> boardService.updateBoard(2L, 10L, new BoardUpdateRequest("수정", "수정내용", null)))
                 .isInstanceOf(APIException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.BOARD_FORBIDDEN);
@@ -143,12 +128,9 @@ class BoardServiceTest {
         Board board = Board.create(user, "제목", "내용", null);
         ReflectionTestUtils.setField(board, "boardId", 10L);
 
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken("1", null, Collections.emptyList())
-        );
         when(boardRepository.findById(10L)).thenReturn(Optional.of(board));
 
-        boardService.deleteBoard(10L);
+        boardService.deleteBoard(1L, 10L);
 
         verify(boardRepository).delete(board);
     }

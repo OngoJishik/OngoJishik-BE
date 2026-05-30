@@ -13,8 +13,6 @@ import com.project.ongojisik.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,8 +24,8 @@ public class BoardService {
     private final UserRepository userRepository;
 
     @Transactional
-    public BoardResponse createBoard(BoardCreateRequest request) {
-        User user = findCurrentUser();
+    public BoardResponse createBoard(Long userId, BoardCreateRequest request) {
+        User user = findCurrentUser(userId);
         Board board = Board.create(user, request.title(), request.content(), request.imageUrl());
         Board savedBoard = boardRepository.save(board);
         return BoardResponse.from(savedBoard);
@@ -54,17 +52,17 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardResponse updateBoard(Long boardId, BoardUpdateRequest request) {
+    public BoardResponse updateBoard(Long userId, Long boardId, BoardUpdateRequest request) {
         Board board = findBoard(boardId);
-        validateBoardOwner(board);
+        validateBoardOwner(board, userId);
         board.update(request.title(), request.content(), request.imageUrl());
         return BoardResponse.from(board);
     }
 
     @Transactional
-    public void deleteBoard(Long boardId) {
+    public void deleteBoard(Long userId, Long boardId) {
         Board board = findBoard(boardId);
-        validateBoardOwner(board);
+        validateBoardOwner(board, userId);
         boardRepository.delete(board);
     }
 
@@ -73,28 +71,14 @@ public class BoardService {
                 .orElseThrow(() -> new APIException(ErrorCode.BOARD_NOT_FOUND));
     }
 
-    private User findCurrentUser() {
-        return userRepository.findById(getCurrentUserId())
+    private User findCurrentUser(Long userId) {
+        return userRepository.findById(userId)
                 .orElseThrow(() -> new APIException(ErrorCode.USER_NOT_FOUND));
     }
 
-    private void validateBoardOwner(Board board) {
-        Long currentUserId = getCurrentUserId();
-        if (!board.getUser().getUserId().equals(currentUserId)) {
+    private void validateBoardOwner(Board board, Long userId) {
+        if (!board.getUser().getUserId().equals(userId)) {
             throw new APIException(ErrorCode.BOARD_FORBIDDEN);
-        }
-    }
-
-    private Long getCurrentUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new APIException(ErrorCode.UNAUTHORIZED);
-        }
-
-        try {
-            return Long.valueOf(String.valueOf(authentication.getPrincipal()));
-        } catch (NumberFormatException exception) {
-            throw new APIException(ErrorCode.UNAUTHORIZED);
         }
     }
 }

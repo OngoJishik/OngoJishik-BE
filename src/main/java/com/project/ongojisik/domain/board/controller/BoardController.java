@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -34,8 +35,11 @@ public class BoardController {
 
     @Operation(summary = "게시글 작성", description = "로그인한 사용자가 게시글을 작성합니다.")
     @PostMapping
-    public ApiResponse<BoardResponse> createBoard(@Valid @RequestBody BoardCreateRequest request) {
-        return ApiResponse.success(boardService.createBoard(request));
+    public ApiResponse<BoardResponse> createBoard(
+            @AuthenticationPrincipal String userId,
+            @Valid @RequestBody BoardCreateRequest request
+    ) {
+        return ApiResponse.success(boardService.createBoard(Long.valueOf(userId), request));
     }
 
     @Operation(summary = "게시글 목록 조회", description = "게시글을 최신순으로 페이지 조회합니다.")
@@ -64,16 +68,17 @@ public class BoardController {
     @Operation(summary = "게시글 수정", description = "작성자만 게시글을 수정합니다.")
     @PatchMapping("/{boardId}")
     public ApiResponse<BoardResponse> updateBoard(
+            @AuthenticationPrincipal String userId,
             @PathVariable Long boardId,
             @Valid @RequestBody BoardUpdateRequest request
     ) {
-        return ApiResponse.success(boardService.updateBoard(boardId, request));
+        return ApiResponse.success(boardService.updateBoard(Long.valueOf(userId), boardId, request));
     }
 
     @Operation(summary = "게시글 삭제", description = "작성자만 게시글을 삭제합니다.")
     @DeleteMapping("/{boardId}")
-    public ApiResponse<Void> deleteBoard(@PathVariable Long boardId) {
-        boardService.deleteBoard(boardId);
+    public ApiResponse<Void> deleteBoard(@AuthenticationPrincipal String userId, @PathVariable Long boardId) {
+        boardService.deleteBoard(Long.valueOf(userId), boardId);
         return ApiResponse.success(null);
     }
 }
