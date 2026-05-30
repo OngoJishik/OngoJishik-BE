@@ -1,5 +1,6 @@
 package com.project.ongojisik.global.exception;
 
+import com.project.ongojisik.global.response.ApiResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,13 +24,13 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
             HttpServletResponse response,
             AuthenticationException authException
     ) throws IOException, ServletException {
-        writeErrorResponse(response, ErrorCode.UNAUTHORIZED, request.getRequestURI());
+        writeErrorResponse(response, ErrorCode.UNAUTHORIZED);
     }
 
-    private void writeErrorResponse(HttpServletResponse response, ErrorCode errorCode, String path) throws IOException {
+    private void writeErrorResponse(HttpServletResponse response, ErrorCode errorCode) throws IOException {
         response.setStatus(errorCode.getActualStatusCode());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("UTF-8");
-        objectMapper.writeValue(response.getWriter(), ErrorResponse.from(errorCode, path));
+        objectMapper.writeValue(response.getWriter(), ApiResponse.fail(errorCode.getCode(), errorCode.getMessage()));
     }
 }
