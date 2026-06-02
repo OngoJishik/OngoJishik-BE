@@ -22,7 +22,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleCustomException(CustomException exception, HttpServletRequest request) {
         log.error("CustomException 발생: method={}, path={}, code={}", request.getMethod(), request.getRequestURI(), exception.getErrorCode().getCode(), exception);
         return ResponseEntity.status(exception.getStatusCode())
-                .body(ApiResponse.fail(exception.getErrorCode().getCode(), exception.getMessage()));
+                .body(ApiResponse.fail(exception.getErrorCode().getActualStatusCode(), exception.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
 
         log.error("Validation 실패: method={}, path={}, message={}", request.getMethod(), request.getRequestURI(), message, exception);
         return ResponseEntity.badRequest()
-                .body(ApiResponse.fail(ErrorCode.VALIDATION_FAILED.getCode(), message));
+                .body(ApiResponse.fail(ErrorCode.VALIDATION_FAILED.getActualStatusCode(), message));
     }
 
     @ExceptionHandler({
@@ -51,7 +51,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleBadRequest(Exception exception, HttpServletRequest request) {
         log.error("BadRequest 발생: method={}, path={}", request.getMethod(), request.getRequestURI(), exception);
         return ResponseEntity.badRequest()
-                .body(ApiResponse.fail(ErrorCode.INVALID_INPUT_VALUE.getCode(), ErrorCode.INVALID_INPUT_VALUE.getMessage()));
+                .body(ApiResponse.fail(ErrorCode.INVALID_INPUT_VALUE.getActualStatusCode(), ErrorCode.INVALID_INPUT_VALUE.getMessage()));
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
@@ -61,7 +61,7 @@ public class GlobalExceptionHandler {
     ) {
         log.error("MethodNotAllowed 발생: method={}, path={}", request.getMethod(), request.getRequestURI(), exception);
         return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED)
-                .body(ApiResponse.fail(ErrorCode.METHOD_NOT_ALLOWED.getCode(), ErrorCode.METHOD_NOT_ALLOWED.getMessage()));
+                .body(ApiResponse.fail(ErrorCode.METHOD_NOT_ALLOWED.getActualStatusCode(), ErrorCode.METHOD_NOT_ALLOWED.getMessage()));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -71,13 +71,13 @@ public class GlobalExceptionHandler {
     ) {
         log.error("AccessDenied 발생: method={}, path={}", request.getMethod(), request.getRequestURI(), exception);
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(ApiResponse.fail(ErrorCode.ACCESS_DENIED.getCode(), ErrorCode.ACCESS_DENIED.getMessage()));
+                .body(ApiResponse.fail(ErrorCode.ACCESS_DENIED.getActualStatusCode(), ErrorCode.ACCESS_DENIED.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(Exception exception, HttpServletRequest request) {
         log.error("Unhandled Exception 발생: method={}, path={}", request.getMethod(), request.getRequestURI(), exception);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR.getCode(), ErrorCode.INTERNAL_SERVER_ERROR.getMessage()));
+                .body(ApiResponse.fail(ErrorCode.INTERNAL_SERVER_ERROR.getActualStatusCode(), ErrorCode.INTERNAL_SERVER_ERROR.getMessage()));
     }
 }
