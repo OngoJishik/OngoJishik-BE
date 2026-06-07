@@ -28,9 +28,15 @@ public enum ErrorCode {
     NOT_FOUND(404, "NOT_FOUND", "요청한 자원이 존재하지 않습니다."),
     USER_NOT_FOUND(404, "USER_NOT_FOUND", "해당 사용자를 찾을 수 없습니다."),
     BOARD_NOT_FOUND(404, "BOARD_NOT_FOUND", "게시글을 찾을 수 없습니다."),
+    BOOKMARK_NOT_FOUND(404, "BOOKMARK_NOT_FOUND", "즐겨찾기한 게시글을 찾을 수 없습니다."),
+    COMMENT_NOT_FOUND(404, "COMMENT_NOT_FOUND", "댓글을 찾을 수 없습니다."),
 
     // 403 오류
     BOARD_FORBIDDEN(403, "BOARD_FORBIDDEN", "게시글을 수정하거나 삭제할 권한이 없습니다."),
+    COMMENT_FORBIDDEN(403, "COMMENT_FORBIDDEN", "댓글을 수정하거나 삭제할 권한이 없습니다."),
+
+    // 409 오류
+    BOOKMARK_ALREADY_EXISTS(409, "BOOKMARK_ALREADY_EXISTS", "이미 즐겨찾기한 게시글입니다."),
 
     //405 오류
     METHOD_NOT_ALLOWED(405, "METHOD_NOT_ALLOWED", "허용되지 않은 HTTP 메서드입니다."),
