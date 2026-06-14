@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.project.ongojisik.domain.board.entity.Board;
+import com.project.ongojisik.domain.board.entity.BoardCategory;
 import com.project.ongojisik.domain.board.repository.BoardRepository;
 import com.project.ongojisik.domain.bookmark.dto.BookmarkResponse;
 import com.project.ongojisik.domain.bookmark.entity.Bookmark;
@@ -119,7 +120,7 @@ class BookmarkServiceTest {
     }
 
     private Board createBoard(Long boardId, User user) {
-        Board board = Board.create(user, "제목", "내용", null);
+        Board board = Board.create(user, "제목", "내용", null, BoardCategory.REVIEW);
         ReflectionTestUtils.setField(board, "boardId", boardId);
         return board;
     }

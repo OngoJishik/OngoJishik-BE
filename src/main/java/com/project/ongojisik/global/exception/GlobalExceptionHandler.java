@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -46,7 +47,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             MissingServletRequestParameterException.class,
             ConstraintViolationException.class,
-            IllegalArgumentException.class
+            IllegalArgumentException.class,
+            HttpMessageNotReadableException.class
     })
     public ResponseEntity<ApiResponse<Void>> handleBadRequest(Exception exception, HttpServletRequest request) {
         log.error("BadRequest 발생: method={}, path={}", request.getMethod(), request.getRequestURI(), exception);
