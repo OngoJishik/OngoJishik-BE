@@ -9,7 +9,9 @@ import com.project.ongojisik.domain.analysis.llm.FeatureExtractor;
 import com.project.ongojisik.domain.analysis.repository.FoodRepository;
 import com.project.ongojisik.global.exception.APIException;
 import com.project.ongojisik.global.exception.ErrorCode;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -32,17 +34,15 @@ public class RecommendService {
         FeatureExtractionResult extractionResult = featureExtractor.extract(query);
         List<Food> foods = foodRepository.findAll();
 
-        List<RecommendFoodResponse> recommendations = foods.stream()
-                .map(food -> new FoodScore(
-                        food,
-                        calculateScore(extractionResult, food)
-                ))
-                .filter(result -> result.score() > 0)
-                .sorted(Comparator.comparingInt(FoodScore::score).reversed()
-                        .thenComparing(result -> result.food().getFoodId()))
-                .limit(3)
-                .map(result -> RecommendFoodResponse.from(result.food()))
-                .toList();
+        List<RecommendFoodResponse> recommendations;
+        if (extractionResult.searchTerms().isEmpty()) {
+            recommendations = selectFallbackRecommendations(foods);
+        } else {
+            recommendations = selectMatchedRecommendations(extractionResult, foods);
+            if (recommendations.isEmpty()) {
+                recommendations = selectFallbackRecommendations(foods);
+            }
+        }
 
         return new RecommendResponse(query, extractionResult.searchTerms(), recommendations);
     }
@@ -55,13 +55,35 @@ public class RecommendService {
         return FoodDetailResponse.from(food, false);
     }
 
-    private int calculateScore(FeatureExtractionResult result, Food food) {
-        int categoryScore = result.categories().contains(food.getCategory()) ? 2 : 0;
-        int featureScore = countMatchedFeatures(
-                result.features(),
-                parseFoodFeatures(food.getFoodFeatures())
-        );
-        return categoryScore + featureScore;
+    private List<RecommendFoodResponse> selectMatchedRecommendations(
+            FeatureExtractionResult extractionResult,
+            List<Food> foods
+    ) {
+        return foods.stream()
+                .map(food -> new FoodScore(
+                        food,
+                        countMatchedFeatures(
+                                extractionResult.features(),
+                                parseFoodFeatures(food.getFoodFeatures())
+                        ),
+                        extractionResult.categories().contains(food.getCategory())
+                ))
+                .filter(result -> result.featureMatchCount() > 0 || result.categoryMatched())
+                .sorted(Comparator.comparingInt(FoodScore::featureMatchCount).reversed()
+                        .thenComparing(FoodScore::categoryMatched, Comparator.reverseOrder())
+                        .thenComparing(result -> result.food().getFoodId()))
+                .limit(3)
+                .map(result -> RecommendFoodResponse.from(result.food()))
+                .toList();
+    }
+
+    private List<RecommendFoodResponse> selectFallbackRecommendations(List<Food> foods) {
+        List<Food> shuffledFoods = new ArrayList<>(foods);
+        Collections.shuffle(shuffledFoods);
+        return shuffledFoods.stream()
+                .limit(3)
+                .map(RecommendFoodResponse::from)
+                .toList();
     }
 
     private List<String> parseFoodFeatures(String foodFeature) {
@@ -84,6 +106,10 @@ public class RecommendService {
                 .count();
     }
 
-    private record FoodScore(Food food, int score) {
+    private record FoodScore(
+            Food food,
+            int featureMatchCount,
+            boolean categoryMatched
+    ) {
     }
 }
