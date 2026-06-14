@@ -1,0 +1,108 @@
+{
+  "version": "1.0",
+  "language": "ko",
+  "purpose": "온고지식 전통 음식 추천 결과와 음식 상세 분류에 사용할 1차 카테고리 목록",
+  "selection_rule": "음식 하나는 primaryCategory 1개를 기본으로 갖고, 필요하면 secondaryCategories를 추가한다.",
+  "categories": [
+    {
+      "id": "cat_rice",
+      "label": "밥류",
+      "description": "쌀밥, 비빔밥, 덮밥, 약밥 등 밥이 중심인 음식"
+    },
+    {
+      "id": "cat_porridge",
+      "label": "죽/미음류",
+      "description": "죽, 미음처럼 곡물을 묽고 부드럽게 끓인 음식"
+    },
+    {
+      "id": "cat_noodle",
+      "label": "면류",
+      "description": "국수, 냉면, 칼국수 등 면이 중심인 음식"
+    },
+    {
+      "id": "cat_soup",
+      "label": "국/탕류",
+      "description": "국물 중심의 국, 탕, 해장국, 보양탕 계열"
+    },
+    {
+      "id": "cat_stew",
+      "label": "찌개/전골류",
+      "description": "찌개, 전골처럼 건더기와 국물이 함께 있는 음식"
+    },
+    {
+      "id": "cat_grill",
+      "label": "구이류",
+      "description": "불, 숯, 팬 등에 구운 음식"
+    },
+    {
+      "id": "cat_steam",
+      "label": "찜류",
+      "description": "증기로 찌거나 양념을 넣어 익힌 음식"
+    },
+    {
+      "id": "cat_stir_fry",
+      "label": "볶음류",
+      "description": "팬에 볶아 만든 음식"
+    },
+    {
+      "id": "cat_braise",
+      "label": "조림류",
+      "description": "간장, 고추장 등 양념에 졸인 음식"
+    },
+    {
+      "id": "cat_jeon",
+      "label": "전/부침류",
+      "description": "기름을 두르고 부친 전, 부침개, 지짐 계열"
+    },
+    {
+      "id": "cat_fried",
+      "label": "튀김/부각류",
+      "description": "기름에 튀기거나 바삭하게 만든 음식"
+    },
+    {
+      "id": "cat_namul",
+      "label": "나물/무침류",
+      "description": "채소, 산나물 등을 데치거나 양념에 무친 음식"
+    },
+    {
+      "id": "cat_kimchi",
+      "label": "김치/절임류",
+      "description": "김치, 겉절이, 장아찌 등 절임과 발효 음식"
+    },
+    {
+      "id": "cat_jang",
+      "label": "장/양념류",
+      "description": "된장, 간장, 고추장 등 장류와 양념류"
+    },
+    {
+      "id": "cat_tteok",
+      "label": "떡/병과류",
+      "description": "떡, 약식, 전통 병과류"
+    },
+    {
+      "id": "cat_hangwa",
+      "label": "한과/과자류",
+      "description": "약과, 유과, 다식 등 전통 과자"
+    },
+    {
+      "id": "cat_beverage",
+      "label": "음청/차류",
+      "description": "식혜, 수정과, 전통차 등 마시는 음식"
+    },
+    {
+      "id": "cat_dessert",
+      "label": "후식/간식류",
+      "description": "식사 후 또는 간식으로 먹는 전통 음식"
+    },
+    {
+      "id": "cat_side",
+      "label": "반찬류",
+      "description": "밥과 함께 곁들이는 반찬 중심 음식"
+    },
+    {
+      "id": "cat_royal",
+      "label": "궁중/의례음식",
+      "description": "궁중음식, 의례상, 잔치상 등 격식 있는 전통 음식"
+    }
+  ]
+}
