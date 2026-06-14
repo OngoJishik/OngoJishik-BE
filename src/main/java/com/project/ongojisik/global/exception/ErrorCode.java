@@ -28,6 +28,7 @@ public enum ErrorCode {
     NOT_FOUND(404, "NOT_FOUND", "요청한 자원이 존재하지 않습니다."),
     USER_NOT_FOUND(404, "USER_NOT_FOUND", "해당 사용자를 찾을 수 없습니다."),
     BOARD_NOT_FOUND(404, "BOARD_NOT_FOUND", "게시글을 찾을 수 없습니다."),
+    FOOD_NOT_FOUND(404, "FOOD_NOT_FOUND", "음식 정보를 찾을 수 없습니다."),
     BOOKMARK_NOT_FOUND(404, "BOOKMARK_NOT_FOUND", "즐겨찾기한 게시글을 찾을 수 없습니다."),
     COMMENT_NOT_FOUND(404, "COMMENT_NOT_FOUND", "댓글을 찾을 수 없습니다."),
 
