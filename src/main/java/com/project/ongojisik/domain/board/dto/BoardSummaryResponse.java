@@ -11,6 +11,7 @@ public record BoardSummaryResponse(
         BoardCategory category,
         Long likeCount,
         Long commentCount,
+        boolean isLiked,
         Long authorId,
         String authorNickname,
         LocalDateTime createdAt
@@ -24,6 +25,7 @@ public record BoardSummaryResponse(
                 board.getCategory(),
                 0L,
                 0L,
+                false,
                 board.getUser().getUserId(),
                 board.getUser().getNickname(),
                 board.getCreatedAt()
