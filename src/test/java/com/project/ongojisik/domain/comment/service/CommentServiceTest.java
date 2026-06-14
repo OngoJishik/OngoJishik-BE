@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.project.ongojisik.domain.board.entity.Board;
+import com.project.ongojisik.domain.board.entity.BoardCategory;
 import com.project.ongojisik.domain.board.repository.BoardRepository;
 import com.project.ongojisik.domain.comment.dto.CommentRequest;
 import com.project.ongojisik.domain.comment.dto.CommentResponse;
@@ -147,7 +148,7 @@ class CommentServiceTest {
     }
 
     private Board createBoard(Long boardId, User user, String title) {
-        Board board = Board.create(user, title, "내용", null);
+        Board board = Board.create(user, title, "내용", null, BoardCategory.REVIEW);
         ReflectionTestUtils.setField(board, "boardId", boardId);
         return board;
     }
