@@ -18,7 +18,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                     select new com.project.ongojisik.domain.board.dto.BoardSummaryResponse(
                         b.boardId,
                         b.title,
-                        b.imageUrl,
+                        b.imageUrls,
                         b.category,
                         (select count(bl) from BoardLike bl where bl.board.boardId = b.boardId),
                         (select count(c) from Comment c where c.board.boardId = b.boardId),
@@ -46,7 +46,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                     select new com.project.ongojisik.domain.board.dto.BoardSummaryResponse(
                         b.boardId,
                         b.title,
-                        b.imageUrl,
+                        b.imageUrls,
                         b.category,
                         (select count(bl) from BoardLike bl where bl.board.boardId = b.boardId),
                         (select count(c) from Comment c where c.board.boardId = b.boardId),
@@ -76,7 +76,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                     select new com.project.ongojisik.domain.board.dto.BoardSummaryResponse(
                         b.boardId,
                         b.title,
-                        b.imageUrl,
+                        b.imageUrls,
                         b.category,
                         (select count(bl) from BoardLike bl where bl.board.boardId = b.boardId),
                         (select count(c) from Comment c where c.board.boardId = b.boardId),
@@ -110,7 +110,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                     select new com.project.ongojisik.domain.board.dto.BoardSummaryResponse(
                         b.boardId,
                         b.title,
-                        b.imageUrl,
+                        b.imageUrls,
                         b.category,
                         (select count(bl) from BoardLike bl where bl.board.boardId = b.boardId),
                         (select count(c) from Comment c where c.board.boardId = b.boardId),
@@ -147,7 +147,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                     select new com.project.ongojisik.domain.board.dto.BoardSummaryResponse(
                         b.boardId,
                         b.title,
-                        b.imageUrl,
+                        b.imageUrls,
                         b.category,
                         (select count(bl) from BoardLike bl where bl.board.boardId = b.boardId),
                         (select count(c) from Comment c where c.board.boardId = b.boardId),
@@ -176,7 +176,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                 b.boardId,
                 b.title,
                 b.content,
-                b.imageUrl,
+                b.imageUrls,
                 b.category,
                 (select count(bl) from BoardLike bl where bl.board.boardId = b.boardId),
                 (select count(c) from Comment c where c.board.boardId = b.boardId),

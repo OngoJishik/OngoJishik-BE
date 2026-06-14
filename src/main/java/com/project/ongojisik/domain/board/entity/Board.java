@@ -1,7 +1,9 @@
 package com.project.ongojisik.domain.board.entity;
 
 import com.project.ongojisik.domain.user.entity.User;
+import com.project.ongojisik.global.converter.StringListJsonConverter;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -12,6 +14,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -32,8 +36,9 @@ public class Board {
     @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(name = "image_url")
-    private String imageUrl;
+    @Convert(converter = StringListJsonConverter.class)
+    @Column(name = "image_urls", nullable = false, columnDefinition = "TEXT")
+    private List<String> imageUrls;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false)
@@ -49,26 +54,30 @@ public class Board {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    private Board(User user, String title, String content, String imageUrl, BoardCategory category, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    private Board(User user, String title, String content, List<String> imageUrls, BoardCategory category, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.user = user;
         this.title = title;
         this.content = content;
-        this.imageUrl = imageUrl;
+        this.imageUrls = imageUrls == null ? new ArrayList<>() : new ArrayList<>(imageUrls);
         this.category = category;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
 
-    public static Board create(User user, String title, String content, String imageUrl, BoardCategory category) {
+    public static Board create(User user, String title, String content, List<String> imageUrls, BoardCategory category) {
         LocalDateTime now = LocalDateTime.now();
-        return new Board(user, title, content, imageUrl, category, now, now);
+        return new Board(user, title, content, imageUrls, category, now, now);
     }
 
-    public void update(String title, String content, String imageUrl, BoardCategory category) {
+    public void update(String title, String content, List<String> imageUrls, BoardCategory category) {
         this.title = title;
         this.content = content;
-        this.imageUrl = imageUrl;
+        this.imageUrls = imageUrls == null ? new ArrayList<>() : new ArrayList<>(imageUrls);
         this.category = category;
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public String getImageUrl() {
+        return imageUrls == null || imageUrls.isEmpty() ? null : imageUrls.get(0);
     }
 }
