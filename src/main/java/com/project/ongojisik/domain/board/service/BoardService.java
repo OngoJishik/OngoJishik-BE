@@ -35,10 +35,10 @@ public class BoardService {
     @Transactional(readOnly = true)
     public Page<BoardSummaryResponse> getBoardList(BoardCategory category, Pageable pageable) {
         if (category == null) {
-            return boardRepository.findAll(pageable).map(BoardSummaryResponse::from);
+            return boardRepository.findAllSummaryWithCounts(pageable);
         }
 
-        return boardRepository.findByCategory(category, pageable).map(BoardSummaryResponse::from);
+        return boardRepository.findSummaryByCategoryWithCounts(category, pageable);
     }
 
     @Transactional(readOnly = true)
@@ -48,17 +48,16 @@ public class BoardService {
         }
 
         if (category == null) {
-            return boardRepository.findByTitleContainingIgnoreCase(title, pageable)
-                    .map(BoardSummaryResponse::from);
+            return boardRepository.findSummaryByTitleWithCounts(title, pageable);
         }
 
-        return boardRepository.findByTitleContainingIgnoreCaseAndCategory(title, category, pageable)
-                .map(BoardSummaryResponse::from);
+        return boardRepository.findSummaryByTitleAndCategoryWithCounts(title, category, pageable);
     }
 
     @Transactional(readOnly = true)
     public BoardResponse getBoard(Long boardId) {
-        return BoardResponse.from(findBoard(boardId));
+        return boardRepository.findResponseByIdWithCounts(boardId)
+                .orElseThrow(() -> new APIException(ErrorCode.BOARD_NOT_FOUND));
     }
 
     @Transactional
@@ -66,7 +65,8 @@ public class BoardService {
         Board board = findBoard(boardId);
         validateBoardOwner(board, userId);
         board.update(request.title(), request.content(), request.imageUrl(), request.category());
-        return BoardResponse.from(board);
+        return boardRepository.findResponseByIdWithCounts(boardId)
+                .orElseThrow(() -> new APIException(ErrorCode.BOARD_NOT_FOUND));
     }
 
     @Transactional

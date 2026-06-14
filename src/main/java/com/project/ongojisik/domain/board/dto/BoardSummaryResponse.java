@@ -9,6 +9,8 @@ public record BoardSummaryResponse(
         String title,
         String imageUrl,
         BoardCategory category,
+        Long likeCount,
+        Long commentCount,
         Long authorId,
         String authorNickname,
         LocalDateTime createdAt
@@ -20,6 +22,8 @@ public record BoardSummaryResponse(
                 board.getTitle(),
                 board.getImageUrl(),
                 board.getCategory(),
+                0L,
+                0L,
                 board.getUser().getUserId(),
                 board.getUser().getNickname(),
                 board.getCreatedAt()
