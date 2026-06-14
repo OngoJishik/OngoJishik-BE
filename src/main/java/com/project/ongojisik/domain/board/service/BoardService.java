@@ -33,30 +33,36 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public Page<BoardSummaryResponse> getBoardList(BoardCategory category, Pageable pageable) {
+    public Page<BoardSummaryResponse> getBoardList(Long userId, BoardCategory category, Pageable pageable) {
         if (category == null) {
-            return boardRepository.findAllSummaryWithCounts(pageable);
+            return boardRepository.findAllSummaryWithCounts(userId, pageable);
         }
 
-        return boardRepository.findSummaryByCategoryWithCounts(category, pageable);
+        return boardRepository.findSummaryByCategoryWithCounts(userId, category, pageable);
     }
 
     @Transactional(readOnly = true)
-    public Page<BoardSummaryResponse> searchBoardsByTitle(String title, BoardCategory category, Pageable pageable) {
+    public Page<BoardSummaryResponse> searchBoardsByTitle(Long userId, String title, BoardCategory category, Pageable pageable) {
         if (title == null || title.isBlank()) {
             throw new APIException(ErrorCode.INVALID_INPUT_VALUE);
         }
 
         if (category == null) {
-            return boardRepository.findSummaryByTitleWithCounts(title, pageable);
+            return boardRepository.findSummaryByTitleWithCounts(userId, title, pageable);
         }
 
-        return boardRepository.findSummaryByTitleAndCategoryWithCounts(title, category, pageable);
+        return boardRepository.findSummaryByTitleAndCategoryWithCounts(userId, title, category, pageable);
     }
 
     @Transactional(readOnly = true)
-    public BoardResponse getBoard(Long boardId) {
-        return boardRepository.findResponseByIdWithCounts(boardId)
+    public Page<BoardSummaryResponse> getMyBoardList(Long userId, Pageable pageable) {
+        findCurrentUser(userId);
+        return boardRepository.findMySummaryWithCounts(userId, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public BoardResponse getBoard(Long userId, Long boardId) {
+        return boardRepository.findResponseByIdWithCounts(userId, boardId)
                 .orElseThrow(() -> new APIException(ErrorCode.BOARD_NOT_FOUND));
     }
 
@@ -65,7 +71,7 @@ public class BoardService {
         Board board = findBoard(boardId);
         validateBoardOwner(board, userId);
         board.update(request.title(), request.content(), request.imageUrl(), request.category());
-        return boardRepository.findResponseByIdWithCounts(boardId)
+        return boardRepository.findResponseByIdWithCounts(userId, boardId)
                 .orElseThrow(() -> new APIException(ErrorCode.BOARD_NOT_FOUND));
     }
 

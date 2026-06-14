@@ -22,15 +22,24 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                         b.category,
                         (select count(bl) from BoardLike bl where bl.board.boardId = b.boardId),
                         (select count(c) from Comment c where c.board.boardId = b.boardId),
+                        exists (
+                            select 1
+                            from BoardLike liked
+                            where liked.board.boardId = b.boardId
+                              and liked.user.userId = :userId
+                        ),
                         b.user.userId,
                         b.user.nickname,
                         b.createdAt
                     )
                     from Board b
-                    """,
+            """,
             countQuery = "select count(b) from Board b"
     )
-    Page<BoardSummaryResponse> findAllSummaryWithCounts(Pageable pageable);
+    Page<BoardSummaryResponse> findAllSummaryWithCounts(
+            @Param("userId") Long userId,
+            Pageable pageable
+    );
 
     @Query(
             value = """
@@ -41,6 +50,12 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                         b.category,
                         (select count(bl) from BoardLike bl where bl.board.boardId = b.boardId),
                         (select count(c) from Comment c where c.board.boardId = b.boardId),
+                        exists (
+                            select 1
+                            from BoardLike liked
+                            where liked.board.boardId = b.boardId
+                              and liked.user.userId = :userId
+                        ),
                         b.user.userId,
                         b.user.nickname,
                         b.createdAt
@@ -51,6 +66,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             countQuery = "select count(b) from Board b where b.category = :category"
     )
     Page<BoardSummaryResponse> findSummaryByCategoryWithCounts(
+            @Param("userId") Long userId,
             @Param("category") BoardCategory category,
             Pageable pageable
     );
@@ -64,6 +80,12 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                         b.category,
                         (select count(bl) from BoardLike bl where bl.board.boardId = b.boardId),
                         (select count(c) from Comment c where c.board.boardId = b.boardId),
+                        exists (
+                            select 1
+                            from BoardLike liked
+                            where liked.board.boardId = b.boardId
+                              and liked.user.userId = :userId
+                        ),
                         b.user.userId,
                         b.user.nickname,
                         b.createdAt
@@ -78,6 +100,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                     """
     )
     Page<BoardSummaryResponse> findSummaryByTitleWithCounts(
+            @Param("userId") Long userId,
             @Param("title") String title,
             Pageable pageable
     );
@@ -91,6 +114,12 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                         b.category,
                         (select count(bl) from BoardLike bl where bl.board.boardId = b.boardId),
                         (select count(c) from Comment c where c.board.boardId = b.boardId),
+                        exists (
+                            select 1
+                            from BoardLike liked
+                            where liked.board.boardId = b.boardId
+                              and liked.user.userId = :userId
+                        ),
                         b.user.userId,
                         b.user.nickname,
                         b.createdAt
@@ -107,8 +136,38 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                     """
     )
     Page<BoardSummaryResponse> findSummaryByTitleAndCategoryWithCounts(
+            @Param("userId") Long userId,
             @Param("title") String title,
             @Param("category") BoardCategory category,
+            Pageable pageable
+    );
+
+    @Query(
+            value = """
+                    select new com.project.ongojisik.domain.board.dto.BoardSummaryResponse(
+                        b.boardId,
+                        b.title,
+                        b.imageUrl,
+                        b.category,
+                        (select count(bl) from BoardLike bl where bl.board.boardId = b.boardId),
+                        (select count(c) from Comment c where c.board.boardId = b.boardId),
+                        exists (
+                            select 1
+                            from BoardLike liked
+                            where liked.board.boardId = b.boardId
+                              and liked.user.userId = :userId
+                        ),
+                        b.user.userId,
+                        b.user.nickname,
+                        b.createdAt
+                    )
+                    from Board b
+                    where b.user.userId = :userId
+                    """,
+            countQuery = "select count(b) from Board b where b.user.userId = :userId"
+    )
+    Page<BoardSummaryResponse> findMySummaryWithCounts(
+            @Param("userId") Long userId,
             Pageable pageable
     );
 
@@ -121,6 +180,12 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                 b.category,
                 (select count(bl) from BoardLike bl where bl.board.boardId = b.boardId),
                 (select count(c) from Comment c where c.board.boardId = b.boardId),
+                exists (
+                    select 1
+                    from BoardLike liked
+                    where liked.board.boardId = b.boardId
+                      and liked.user.userId = :userId
+                ),
                 b.user.userId,
                 b.user.nickname,
                 b.createdAt,
@@ -129,6 +194,9 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             from Board b
             where b.boardId = :boardId
             """)
-    Optional<BoardResponse> findResponseByIdWithCounts(@Param("boardId") Long boardId);
+    Optional<BoardResponse> findResponseByIdWithCounts(
+            @Param("userId") Long userId,
+            @Param("boardId") Long boardId
+    );
 
 }
