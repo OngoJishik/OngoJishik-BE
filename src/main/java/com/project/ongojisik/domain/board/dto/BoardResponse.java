@@ -1,6 +1,7 @@
 package com.project.ongojisik.domain.board.dto;
 
 import com.project.ongojisik.domain.board.entity.Board;
+import com.project.ongojisik.domain.board.entity.BoardCategory;
 import java.time.LocalDateTime;
 
 public record BoardResponse(
@@ -8,6 +9,7 @@ public record BoardResponse(
         String title,
         String content,
         String imageUrl,
+        BoardCategory category,
         Long authorId,
         String authorNickname,
         LocalDateTime createdAt,
@@ -20,6 +22,7 @@ public record BoardResponse(
                 board.getTitle(),
                 board.getContent(),
                 board.getImageUrl(),
+                board.getCategory(),
                 board.getUser().getUserId(),
                 board.getUser().getNickname(),
                 board.getCreatedAt(),
