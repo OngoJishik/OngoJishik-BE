@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import com.project.ongojisik.domain.board.dto.BoardCreateRequest;
 import com.project.ongojisik.domain.board.dto.BoardResponse;
+import com.project.ongojisik.domain.board.dto.BoardSummaryResponse;
 import com.project.ongojisik.domain.board.dto.BoardUpdateRequest;
 import com.project.ongojisik.domain.board.entity.Board;
 import com.project.ongojisik.domain.board.entity.BoardCategory;
@@ -59,6 +60,8 @@ class BoardServiceTest {
         assertThat(response.boardId()).isEqualTo(10L);
         assertThat(response.title()).isEqualTo("제목");
         assertThat(response.category()).isEqualTo(BoardCategory.REVIEW);
+        assertThat(response.likeCount()).isZero();
+        assertThat(response.commentCount()).isZero();
         verify(boardRepository).save(any(Board.class));
     }
 
@@ -69,12 +72,18 @@ class BoardServiceTest {
         Board board = Board.create(user, "제목", "내용", null, BoardCategory.REVIEW);
         ReflectionTestUtils.setField(board, "boardId", 10L);
 
-        Page<Board> boards = new PageImpl<>(java.util.List.of(board), PageRequest.of(0, 10), 1);
-        when(boardRepository.findAll(any(Pageable.class))).thenReturn(boards);
+        Page<BoardSummaryResponse> boards = new PageImpl<>(
+                java.util.List.of(BoardSummaryResponse.from(board)),
+                PageRequest.of(0, 10),
+                1
+        );
+        when(boardRepository.findAllSummaryWithCounts(any(Pageable.class))).thenReturn(boards);
 
-        Page<?> response = boardService.getBoardList(null, PageRequest.of(0, 10));
+        Page<BoardSummaryResponse> response = boardService.getBoardList(null, PageRequest.of(0, 10));
 
         assertThat(response.getTotalElements()).isEqualTo(1L);
+        assertThat(response.getContent().get(0).likeCount()).isZero();
+        assertThat(response.getContent().get(0).commentCount()).isZero();
     }
 
     @Test
@@ -84,12 +93,28 @@ class BoardServiceTest {
         Board board = Board.create(user, "제목", "내용", null, BoardCategory.RECIPE);
         ReflectionTestUtils.setField(board, "boardId", 10L);
 
-        Page<Board> boards = new PageImpl<>(java.util.List.of(board), PageRequest.of(0, 10), 1);
-        when(boardRepository.findByCategory(BoardCategory.RECIPE, PageRequest.of(0, 10))).thenReturn(boards);
+        Page<BoardSummaryResponse> boards = new PageImpl<>(
+                java.util.List.of(new BoardSummaryResponse(
+                        10L,
+                        "제목",
+                        null,
+                        BoardCategory.RECIPE,
+                        2L,
+                        3L,
+                        1L,
+                        "테스터",
+                        board.getCreatedAt()
+                )),
+                PageRequest.of(0, 10),
+                1
+        );
+        when(boardRepository.findSummaryByCategoryWithCounts(BoardCategory.RECIPE, PageRequest.of(0, 10))).thenReturn(boards);
 
-        Page<?> response = boardService.getBoardList(BoardCategory.RECIPE, PageRequest.of(0, 10));
+        Page<BoardSummaryResponse> response = boardService.getBoardList(BoardCategory.RECIPE, PageRequest.of(0, 10));
 
         assertThat(response.getTotalElements()).isEqualTo(1L);
+        assertThat(response.getContent().get(0).likeCount()).isEqualTo(2L);
+        assertThat(response.getContent().get(0).commentCount()).isEqualTo(3L);
     }
 
     @Test
@@ -99,8 +124,12 @@ class BoardServiceTest {
         Board board = Board.create(user, "김치찌개 맛집", "내용", null, BoardCategory.REVIEW);
         ReflectionTestUtils.setField(board, "boardId", 11L);
 
-        Page<Board> boards = new PageImpl<>(java.util.List.of(board), PageRequest.of(0, 10), 1);
-        when(boardRepository.findByTitleContainingIgnoreCase("김치", PageRequest.of(0, 10))).thenReturn(boards);
+        Page<BoardSummaryResponse> boards = new PageImpl<>(
+                java.util.List.of(BoardSummaryResponse.from(board)),
+                PageRequest.of(0, 10),
+                1
+        );
+        when(boardRepository.findSummaryByTitleWithCounts("김치", PageRequest.of(0, 10))).thenReturn(boards);
 
         Page<?> response = boardService.searchBoardsByTitle("김치", null, PageRequest.of(0, 10));
 
@@ -114,12 +143,28 @@ class BoardServiceTest {
         Board board = Board.create(user, "김치찌개 레시피", "내용", null, BoardCategory.RECIPE);
         ReflectionTestUtils.setField(board, "boardId", 11L);
 
-        Page<Board> boards = new PageImpl<>(java.util.List.of(board), PageRequest.of(0, 10), 1);
-        when(boardRepository.findByTitleContainingIgnoreCaseAndCategory("김치", BoardCategory.RECIPE, PageRequest.of(0, 10))).thenReturn(boards);
+        Page<BoardSummaryResponse> boards = new PageImpl<>(
+                java.util.List.of(new BoardSummaryResponse(
+                        11L,
+                        "김치찌개 레시피",
+                        null,
+                        BoardCategory.RECIPE,
+                        5L,
+                        7L,
+                        1L,
+                        "테스터",
+                        board.getCreatedAt()
+                )),
+                PageRequest.of(0, 10),
+                1
+        );
+        when(boardRepository.findSummaryByTitleAndCategoryWithCounts("김치", BoardCategory.RECIPE, PageRequest.of(0, 10))).thenReturn(boards);
 
-        Page<?> response = boardService.searchBoardsByTitle("김치", BoardCategory.RECIPE, PageRequest.of(0, 10));
+        Page<BoardSummaryResponse> response = boardService.searchBoardsByTitle("김치", BoardCategory.RECIPE, PageRequest.of(0, 10));
 
         assertThat(response.getTotalElements()).isEqualTo(1L);
+        assertThat(response.getContent().get(0).likeCount()).isEqualTo(5L);
+        assertThat(response.getContent().get(0).commentCount()).isEqualTo(7L);
     }
 
     @Test
@@ -129,12 +174,26 @@ class BoardServiceTest {
         Board board = Board.create(user, "제목", "내용", null, BoardCategory.QNA);
         ReflectionTestUtils.setField(board, "boardId", 10L);
 
-        when(boardRepository.findById(10L)).thenReturn(Optional.of(board));
+        when(boardRepository.findResponseByIdWithCounts(10L)).thenReturn(Optional.of(new BoardResponse(
+                10L,
+                "제목",
+                "내용",
+                null,
+                BoardCategory.QNA,
+                4L,
+                6L,
+                1L,
+                "테스터",
+                board.getCreatedAt(),
+                board.getUpdatedAt()
+        )));
 
         BoardResponse response = boardService.getBoard(10L);
 
         assertThat(response.boardId()).isEqualTo(10L);
         assertThat(response.category()).isEqualTo(BoardCategory.QNA);
+        assertThat(response.likeCount()).isEqualTo(4L);
+        assertThat(response.commentCount()).isEqualTo(6L);
     }
 
     @Test
