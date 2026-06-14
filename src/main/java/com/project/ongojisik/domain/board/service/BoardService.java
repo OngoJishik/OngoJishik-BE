@@ -5,6 +5,7 @@ import com.project.ongojisik.domain.board.dto.BoardResponse;
 import com.project.ongojisik.domain.board.dto.BoardSummaryResponse;
 import com.project.ongojisik.domain.board.dto.BoardUpdateRequest;
 import com.project.ongojisik.domain.board.entity.Board;
+import com.project.ongojisik.domain.board.entity.BoardCategory;
 import com.project.ongojisik.domain.board.repository.BoardRepository;
 import com.project.ongojisik.domain.user.entity.User;
 import com.project.ongojisik.domain.user.repository.UserRepository;
@@ -26,23 +27,32 @@ public class BoardService {
     @Transactional
     public BoardResponse createBoard(Long userId, BoardCreateRequest request) {
         User user = findCurrentUser(userId);
-        Board board = Board.create(user, request.title(), request.content(), request.imageUrl());
+        Board board = Board.create(user, request.title(), request.content(), request.imageUrl(), request.category());
         Board savedBoard = boardRepository.save(board);
         return BoardResponse.from(savedBoard);
     }
 
     @Transactional(readOnly = true)
-    public Page<BoardSummaryResponse> getBoardList(Pageable pageable) {
-        return boardRepository.findAll(pageable).map(BoardSummaryResponse::from);
+    public Page<BoardSummaryResponse> getBoardList(BoardCategory category, Pageable pageable) {
+        if (category == null) {
+            return boardRepository.findAll(pageable).map(BoardSummaryResponse::from);
+        }
+
+        return boardRepository.findByCategory(category, pageable).map(BoardSummaryResponse::from);
     }
 
     @Transactional(readOnly = true)
-    public Page<BoardSummaryResponse> searchBoardsByTitle(String title, Pageable pageable) {
+    public Page<BoardSummaryResponse> searchBoardsByTitle(String title, BoardCategory category, Pageable pageable) {
         if (title == null || title.isBlank()) {
             throw new APIException(ErrorCode.INVALID_INPUT_VALUE);
         }
 
-        return boardRepository.findByTitleContainingIgnoreCase(title, pageable)
+        if (category == null) {
+            return boardRepository.findByTitleContainingIgnoreCase(title, pageable)
+                    .map(BoardSummaryResponse::from);
+        }
+
+        return boardRepository.findByTitleContainingIgnoreCaseAndCategory(title, category, pageable)
                 .map(BoardSummaryResponse::from);
     }
 
@@ -55,7 +65,7 @@ public class BoardService {
     public BoardResponse updateBoard(Long userId, Long boardId, BoardUpdateRequest request) {
         Board board = findBoard(boardId);
         validateBoardOwner(board, userId);
-        board.update(request.title(), request.content(), request.imageUrl());
+        board.update(request.title(), request.content(), request.imageUrl(), request.category());
         return BoardResponse.from(board);
     }
 
