@@ -1,8 +1,8 @@
 package com.project.ongojisik.domain.search.controller;
 
+import com.project.ongojisik.domain.search.dto.SearchListResponse;
 import com.project.ongojisik.domain.search.dto.SearchRequest;
 import com.project.ongojisik.domain.search.dto.SearchResponse;
-import com.project.ongojisik.domain.search.dto.SearchSummaryResponse;
 import com.project.ongojisik.domain.search.service.SearchService;
 import com.project.ongojisik.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,10 +10,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,11 +39,10 @@ public class SearchController {
 
     @Operation(summary = "Get recent searches", description = "Returns recent search histories for the current user.")
     @GetMapping("/recent")
-    public ApiResponse<Page<SearchSummaryResponse>> getRecentSearches(
-            @AuthenticationPrincipal String userId,
-            @PageableDefault(size = 10, sort = "createdAt", direction = Direction.DESC) Pageable pageable
+    public ApiResponse<SearchListResponse> getRecentSearches(
+            @AuthenticationPrincipal String userId
     ) {
-        return ApiResponse.success(searchService.getRecentSearches(Long.valueOf(userId), pageable));
+        return ApiResponse.success(searchService.getRecentSearches(Long.valueOf(userId)));
     }
 
     @Operation(summary = "Get recent search result", description = "Returns the recommendation list saved for a recent search.")

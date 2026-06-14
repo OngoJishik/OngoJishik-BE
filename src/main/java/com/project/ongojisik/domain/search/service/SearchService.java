@@ -5,6 +5,7 @@ import com.project.ongojisik.domain.analysis.dto.RecommendResponse;
 import com.project.ongojisik.domain.analysis.entity.Food;
 import com.project.ongojisik.domain.analysis.repository.FoodRepository;
 import com.project.ongojisik.domain.analysis.service.RecommendService;
+import com.project.ongojisik.domain.search.dto.SearchListResponse;
 import com.project.ongojisik.domain.search.dto.SearchRequest;
 import com.project.ongojisik.domain.search.dto.SearchResponse;
 import com.project.ongojisik.domain.search.dto.SearchSummaryResponse;
@@ -20,8 +21,6 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +36,17 @@ public class SearchService {
     @Transactional
     public SearchResponse search(Long userId, SearchRequest request) {
         User user = findCurrentUser(userId);
-        RecommendResponse recommendResponse = recommendService.recommend(request.query());
+        String query = request.query().trim();
+
+        SearchHistory existingSearchHistory = searchHistoryRepository
+                .findFirstByUserUserIdAndQuery(userId, query)
+                .orElse(null);
+        if (existingSearchHistory != null) {
+            List<RecommendFoodResponse> recommendations = findRecommendationsInSavedOrder(existingSearchHistory);
+            return SearchResponse.from(existingSearchHistory, recommendations);
+        }
+
+        RecommendResponse recommendResponse = recommendService.recommend(query);
         List<String> recommendedFoodIds = recommendResponse.recommendations().stream()
                 .map(RecommendFoodResponse::foodId)
                 .toList();
@@ -54,10 +63,12 @@ public class SearchService {
     }
 
     @Transactional(readOnly = true)
-    public Page<SearchSummaryResponse> getRecentSearches(Long userId, Pageable pageable) {
+    public SearchListResponse getRecentSearches(Long userId) {
         findCurrentUser(userId);
-        return searchHistoryRepository.findByUserUserId(userId, pageable)
-                .map(SearchSummaryResponse::from);
+        List<SearchSummaryResponse> searches = searchHistoryRepository.findByUserUserId(userId).stream()
+                .map(SearchSummaryResponse::from)
+                .toList();
+        return SearchListResponse.from(searches);
     }
 
     @Transactional(readOnly = true)

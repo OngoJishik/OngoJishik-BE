@@ -1,9 +1,8 @@
 package com.project.ongojisik.domain.search.repository;
 
 import com.project.ongojisik.domain.search.entity.SearchHistory;
+import java.util.List;
 import java.util.Optional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,10 +16,9 @@ public interface SearchHistoryRepository extends JpaRepository<SearchHistory, Lo
             where sh.user.userId = :userId
             order by sh.createdAt desc, sh.searchId desc
             """)
-    Page<SearchHistory> findByUserUserId(
-            @Param("userId") Long userId,
-            Pageable pageable
-    );
+    List<SearchHistory> findByUserUserId(@Param("userId") Long userId);
+
+    Optional<SearchHistory> findFirstByUserUserIdAndQuery(Long userId, String query);
 
     @Query("""
             select sh
