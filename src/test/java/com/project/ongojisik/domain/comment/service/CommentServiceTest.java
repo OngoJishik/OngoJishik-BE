@@ -148,7 +148,7 @@ class CommentServiceTest {
     }
 
     private Board createBoard(Long boardId, User user, String title) {
-        Board board = Board.create(user, title, "내용", null, BoardCategory.REVIEW);
+        Board board = Board.create(user, title, "내용", java.util.List.of(), BoardCategory.REVIEW);
         ReflectionTestUtils.setField(board, "boardId", boardId);
         return board;
     }
