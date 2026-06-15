@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +28,7 @@ public class BoardService {
     @Transactional
     public BoardResponse createBoard(Long userId, BoardCreateRequest request) {
         User user = findCurrentUser(userId);
-        Board board = Board.create(user, request.title(), request.content(), request.imageUrl(), request.category());
+        Board board = Board.create(user, request.title(), request.content(), normalizeImageUrls(request.imageUrls()), request.category());
         Board savedBoard = boardRepository.save(board);
         return BoardResponse.from(savedBoard);
     }
@@ -70,7 +71,7 @@ public class BoardService {
     public BoardResponse updateBoard(Long userId, Long boardId, BoardUpdateRequest request) {
         Board board = findBoard(boardId);
         validateBoardOwner(board, userId);
-        board.update(request.title(), request.content(), request.imageUrl(), request.category());
+        board.update(request.title(), request.content(), normalizeImageUrls(request.imageUrls()), request.category());
         return boardRepository.findResponseByIdWithCounts(userId, boardId)
                 .orElseThrow(() -> new APIException(ErrorCode.BOARD_NOT_FOUND));
     }
@@ -90,6 +91,10 @@ public class BoardService {
     private User findCurrentUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new APIException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    private List<String> normalizeImageUrls(List<String> imageUrls) {
+        return imageUrls == null ? List.of() : List.copyOf(imageUrls);
     }
 
     private void validateBoardOwner(Board board, Long userId) {

@@ -109,7 +109,7 @@ class BoardLikeServiceTest {
     }
 
     private Board createBoard(Long boardId, User user) {
-        Board board = Board.create(user, "제목", "내용", null, BoardCategory.REVIEW);
+        Board board = Board.create(user, "제목", "내용", java.util.List.of(), BoardCategory.REVIEW);
         ReflectionTestUtils.setField(board, "boardId", boardId);
         return board;
     }
