@@ -7,7 +7,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.project.ongojisik.domain.board.entity.Board;
-import com.project.ongojisik.domain.board.entity.BoardCategory;
 import com.project.ongojisik.domain.board.repository.BoardRepository;
 import com.project.ongojisik.domain.boardlike.dto.BoardLikeResponse;
 import com.project.ongojisik.domain.boardlike.entity.BoardLike;
@@ -110,7 +109,7 @@ class BoardLikeServiceTest {
 
     private Board createBoard(Long boardId, User user) {
         Board board = Board.create(user, "제목", "내용", java.util.List.of(), BoardCategory.REVIEW);
-        ReflectionTestUtils.setField(board, "boardId", boardId);
+        Board board = Board.create(user, "제목", "내용", null);
         return board;
     }
 }
