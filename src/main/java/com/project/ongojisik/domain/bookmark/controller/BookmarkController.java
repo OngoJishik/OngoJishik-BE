@@ -6,11 +6,8 @@ import com.project.ongojisik.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "즐겨찾기", description = "게시글 즐겨찾기 API")
+@Tag(name = "즐겨찾기", description = "음식 즐겨찾기 API")
 @SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequiredArgsConstructor
@@ -28,31 +25,30 @@ public class BookmarkController {
 
     private final BookmarkService bookmarkService;
 
-    @Operation(summary = "즐겨찾기 추가", description = "로그인한 사용자가 게시글을 즐겨찾기에 추가합니다.")
-    @PostMapping("/{boardId}")
+    @Operation(summary = "음식 즐겨찾기 추가")
+    @PostMapping("/{foodId}")
     public ApiResponse<BookmarkResponse> addBookmark(
             @AuthenticationPrincipal String userId,
-            @PathVariable Long boardId
+            @PathVariable String foodId
     ) {
-        return ApiResponse.success(bookmarkService.addBookmark(Long.valueOf(userId), boardId));
+        return ApiResponse.success(bookmarkService.addBookmark(Long.valueOf(userId), foodId));
     }
 
-    @Operation(summary = "즐겨찾기 삭제", description = "로그인한 사용자가 게시글 즐겨찾기를 삭제합니다.")
-    @DeleteMapping("/{boardId}")
+    @Operation(summary = "음식 즐겨찾기 삭제")
+    @DeleteMapping("/{foodId}")
     public ApiResponse<Void> deleteBookmark(
             @AuthenticationPrincipal String userId,
-            @PathVariable Long boardId
+            @PathVariable String foodId
     ) {
-        bookmarkService.deleteBookmark(Long.valueOf(userId), boardId);
+        bookmarkService.deleteBookmark(Long.valueOf(userId), foodId);
         return ApiResponse.success(null);
     }
 
-    @Operation(summary = "즐겨찾기 목록 조회", description = "로그인한 사용자의 즐겨찾기 게시글 목록을 조회합니다.")
+    @Operation(summary = "내 즐겨찾기 목록 조회")
     @GetMapping
-    public ApiResponse<Page<BookmarkResponse>> getBookmarkList(
-            @AuthenticationPrincipal String userId,
-            @PageableDefault(size = 10, sort = "createdAt", direction = Direction.DESC) Pageable pageable
+    public ApiResponse<List<BookmarkResponse>> getBookmarks(
+            @AuthenticationPrincipal String userId
     ) {
-        return ApiResponse.success(bookmarkService.getBookmarkList(Long.valueOf(userId), pageable));
+        return ApiResponse.success(bookmarkService.getBookmarks(Long.valueOf(userId)));
     }
 }

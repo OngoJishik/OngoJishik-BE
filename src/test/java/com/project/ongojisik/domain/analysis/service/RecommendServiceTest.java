@@ -5,11 +5,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.project.ongojisik.domain.analysis.dto.FoodDetailResponse;
+import com.project.ongojisik.domain.analysis.dto.RecommendFoodResponse;
 import com.project.ongojisik.domain.analysis.dto.RecommendResponse;
 import com.project.ongojisik.domain.analysis.entity.Food;
 import com.project.ongojisik.domain.analysis.llm.FeatureExtractionResult;
 import com.project.ongojisik.domain.analysis.llm.FeatureExtractor;
 import com.project.ongojisik.domain.analysis.repository.FoodRepository;
+import com.project.ongojisik.domain.bookmark.repository.BookmarkRepository;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -18,8 +21,9 @@ class RecommendServiceTest {
 
     private final FoodRepository foodRepository = mock(FoodRepository.class);
     private final FeatureExtractor featureExtractor = mock(FeatureExtractor.class);
+    private final BookmarkRepository bookmarkRepository = mock(BookmarkRepository.class);
     private final RecommendService recommendService =
-            new RecommendService(foodRepository, featureExtractor);
+            new RecommendService(foodRepository, featureExtractor, bookmarkRepository);
 
     @Test
     void ranksExactCategoryAndFeatureMatches() {
@@ -39,7 +43,7 @@ class RecommendServiceTest {
 
         assertEquals(List.of("국/탕류", "매운맛"), response.extractedFeatures());
         assertEquals(List.of("1", "2"), response.recommendations().stream()
-                .map(recommendation -> recommendation.foodId())
+                .map(RecommendFoodResponse::foodId)
                 .toList());
     }
 
@@ -65,7 +69,7 @@ class RecommendServiceTest {
         RecommendResponse response = recommendService.recommend("ranking query");
 
         assertThat(response.recommendations())
-                .extracting(recommendation -> recommendation.foodId())
+                .extracting(RecommendFoodResponse::foodId)
                 .containsExactly("3", "4", "1");
     }
 
@@ -83,7 +87,7 @@ class RecommendServiceTest {
         RecommendResponse response = recommendService.recommend("category query");
 
         assertThat(response.recommendations())
-                .extracting(recommendation -> recommendation.foodId())
+                .extracting(RecommendFoodResponse::foodId)
                 .containsExactly("1");
     }
 
@@ -104,7 +108,7 @@ class RecommendServiceTest {
         assertThat(response.extractedFeatures()).isEmpty();
         assertThat(response.recommendations())
                 .hasSize(3)
-                .extracting(recommendation -> recommendation.foodId())
+                .extracting(RecommendFoodResponse::foodId)
                 .doesNotHaveDuplicates()
                 .isSubsetOf("1", "2", "3", "4");
     }
@@ -126,8 +130,19 @@ class RecommendServiceTest {
 
         assertThat(response.recommendations())
                 .hasSize(2)
-                .extracting(recommendation -> recommendation.foodId())
+                .extracting(RecommendFoodResponse::foodId)
                 .containsExactlyInAnyOrder("1", "2");
+    }
+
+    @Test
+    void foodDetailContainsCurrentUsersBookmarkStatus() {
+        Food food = food("011763", "food", "category", "feature");
+        when(foodRepository.findById("011763")).thenReturn(java.util.Optional.of(food));
+        when(bookmarkRepository.existsByUserUserIdAndFoodFoodId(1L, "011763")).thenReturn(true);
+
+        FoodDetailResponse response = recommendService.getFoodDetail(1L, "011763");
+
+        assertThat(response.isBookmarked()).isTrue();
     }
 
     private Food food(String id, String name, String category, String features) {

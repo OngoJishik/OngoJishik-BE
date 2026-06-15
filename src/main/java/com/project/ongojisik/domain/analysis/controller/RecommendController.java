@@ -31,7 +31,6 @@ public class RecommendController {
     )
     @PostMapping("/recommend")
     public ApiResponse<RecommendResponse> recommend(
-            @AuthenticationPrincipal String userId,
             @RequestBody RecommendRequest request
     ) {
         return ApiResponse.success(recommendService.recommend(request.query()));
@@ -43,11 +42,12 @@ public class RecommendController {
     )
     @GetMapping("/{foodId}")
     public ApiResponse<FoodDetailResponse> getFoodDetail(
+            @AuthenticationPrincipal String userId,
             @PathVariable String foodId
     ) {
         return ApiResponse.success(
                 "음식 상세 정보 조회에 성공했습니다.",
-                recommendService.getFoodDetail(foodId)
+                recommendService.getFoodDetail(Long.valueOf(userId), foodId)
         );
     }
 }

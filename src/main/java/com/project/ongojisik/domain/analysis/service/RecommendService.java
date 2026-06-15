@@ -7,6 +7,7 @@ import com.project.ongojisik.domain.analysis.entity.Food;
 import com.project.ongojisik.domain.analysis.llm.FeatureExtractionResult;
 import com.project.ongojisik.domain.analysis.llm.FeatureExtractor;
 import com.project.ongojisik.domain.analysis.repository.FoodRepository;
+import com.project.ongojisik.domain.bookmark.repository.BookmarkRepository;
 import com.project.ongojisik.global.exception.APIException;
 import com.project.ongojisik.global.exception.ErrorCode;
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class RecommendService {
 
     private final FoodRepository foodRepository;
     private final FeatureExtractor featureExtractor;
+    private final BookmarkRepository bookmarkRepository;
 
     public RecommendResponse recommend(String query) {
         if (query == null || query.isBlank()) {
@@ -48,11 +50,12 @@ public class RecommendService {
     }
 
     @Transactional(readOnly = true)
-    public FoodDetailResponse getFoodDetail(String foodId) {
+    public FoodDetailResponse getFoodDetail(Long userId, String foodId) {
         Food food = foodRepository.findById(foodId)
                 .orElseThrow(() -> new APIException(ErrorCode.FOOD_NOT_FOUND));
 
-        return FoodDetailResponse.from(food, false);
+        boolean isBookmarked = bookmarkRepository.existsByUserUserIdAndFoodFoodId(userId, foodId);
+        return FoodDetailResponse.from(food, isBookmarked);
     }
 
     private List<RecommendFoodResponse> selectMatchedRecommendations(
