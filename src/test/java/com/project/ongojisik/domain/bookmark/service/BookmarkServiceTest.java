@@ -27,7 +27,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class BookmarkServiceTest {
@@ -53,7 +52,7 @@ class BookmarkServiceTest {
         User user = createUser(1L);
         Board board = createBoard(10L, user);
         Bookmark bookmark = Bookmark.create(user, board);
-        ReflectionTestUtils.setField(bookmark, "bookmarkId", 100L);
+        bookmark.assignBookmarkId(100L);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(boardRepository.findById(10L)).thenReturn(Optional.of(board));
@@ -88,7 +87,7 @@ class BookmarkServiceTest {
         User user = createUser(1L);
         Board board = createBoard(10L, user);
         Bookmark bookmark = Bookmark.create(user, board);
-        ReflectionTestUtils.setField(bookmark, "bookmarkId", 100L);
+        bookmark.assignBookmarkId(100L);
 
         when(bookmarkRepository.findByUserUserIdAndBoardBoardId(1L, 10L)).thenReturn(Optional.of(bookmark));
 
@@ -102,7 +101,7 @@ class BookmarkServiceTest {
         User user = createUser(1L);
         Board board = createBoard(10L, user);
         Bookmark bookmark = Bookmark.create(user, board);
-        ReflectionTestUtils.setField(bookmark, "bookmarkId", 100L);
+        bookmark.assignBookmarkId(100L);
 
         Page<Bookmark> bookmarks = new PageImpl<>(java.util.List.of(bookmark), PageRequest.of(0, 10), 1);
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -116,12 +115,13 @@ class BookmarkServiceTest {
 
     private User createUser(Long userId) {
         User user = User.create("google-123", "user@gmail.com", "테스터");
-        ReflectionTestUtils.setField(user, "userId", userId);
+        user.assignUserId(userId);
         return user;
     }
 
     private Board createBoard(Long boardId, User user) {
         Board board = Board.create(user, "제목", "내용", java.util.List.of("image.png"), BoardCategory.REVIEW);
+        board.assignBoardId(boardId);
         Board board = Board.create(user, "제목", "내용", null);
         ReflectionTestUtils.setField(board, "boardId", boardId);
         return board;

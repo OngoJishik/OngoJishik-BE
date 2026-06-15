@@ -9,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -20,6 +21,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class S3ImageStorageService implements ImageStorageService {
 
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy/MM/dd");
@@ -46,6 +48,7 @@ public class S3ImageStorageService implements ImageStorageService {
         }
 
         if (!StringUtils.hasText(bucketName)) {
+            log.error("S3 bucket name is not configured");
             throw new APIException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
 
@@ -54,6 +57,7 @@ public class S3ImageStorageService implements ImageStorageService {
         String key = "board-images/" + LocalDate.now().format(DATE_FORMATTER) + "/" + fileName;
 
         try {
+            log.info("Uploading image to S3: bucket={}, key={}, originalFileName={}", bucketName, key, file.getOriginalFilename());
             PutObjectRequest request = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(key)
@@ -67,6 +71,7 @@ public class S3ImageStorageService implements ImageStorageService {
                     .build());
             return url.toExternalForm();
         } catch (IOException exception) {
+            log.error("Failed to upload image to S3: bucket={}, key={}, originalFileName={}", bucketName, key, file.getOriginalFilename(), exception);
             throw new APIException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
