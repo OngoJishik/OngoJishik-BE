@@ -43,4 +43,8 @@ public class User {
         this.email = email;
         this.nickname = nickname;
     }
+
+    public void assignUserId(Long userId) {
+        this.userId = userId;
+    }
 }

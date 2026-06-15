@@ -80,4 +80,8 @@ public class Board {
     public String getImageUrl() {
         return imageUrls == null || imageUrls.isEmpty() ? null : imageUrls.get(0);
     }
+
+    public void assignBoardId(Long boardId) {
+        this.boardId = boardId;
+    }
 }

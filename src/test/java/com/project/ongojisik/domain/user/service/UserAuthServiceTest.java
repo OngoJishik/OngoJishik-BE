@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class UserAuthServiceTest {
@@ -49,7 +48,7 @@ class UserAuthServiceTest {
         GoogleOAuthService.GoogleUserInfo googleUserInfo =
                 new GoogleOAuthService.GoogleUserInfo("google-123", "newuser@gmail.com", "새유저");
         User savedUser = User.create("google-123", "newuser@gmail.com", "새유저");
-        ReflectionTestUtils.setField(savedUser, "userId", 1L);
+        savedUser.assignUserId(1L);
 
         when(googleOAuthService.verify("valid-id-token")).thenReturn(googleUserInfo);
         when(userRepository.findByProviderId("google-123")).thenReturn(Optional.empty());
@@ -71,7 +70,7 @@ class UserAuthServiceTest {
         GoogleOAuthService.GoogleUserInfo googleUserInfo =
                 new GoogleOAuthService.GoogleUserInfo("google-456", "updated@gmail.com", "수정닉네임");
         User existingUser = User.create("google-456", "old@gmail.com", "기존닉네임");
-        ReflectionTestUtils.setField(existingUser, "userId", 2L);
+        existingUser.assignUserId(2L);
 
         when(googleOAuthService.verify("valid-id-token")).thenReturn(googleUserInfo);
         when(userRepository.findByProviderId("google-456")).thenReturn(Optional.of(existingUser));
@@ -97,7 +96,7 @@ class UserAuthServiceTest {
     @Test
     void refreshTokenReissuesTokensWhenRefreshTokenIsValid() {
         User existingUser = User.create("google-789", "refresh@gmail.com", "리프레시유저");
-        ReflectionTestUtils.setField(existingUser, "userId", 3L);
+        existingUser.assignUserId(3L);
         String refreshToken = jwtTokenProvider.createRefreshToken(3L);
 
         when(userRepository.findById(3L)).thenReturn(Optional.of(existingUser));

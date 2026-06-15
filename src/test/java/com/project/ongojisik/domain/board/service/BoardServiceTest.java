@@ -27,7 +27,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class BoardServiceTest {
@@ -48,9 +47,9 @@ class BoardServiceTest {
     @Test
     void createBoardCreatesBoardForCurrentUser() {
         User user = User.create("google-123", "user@gmail.com", "테스터");
-        ReflectionTestUtils.setField(user, "userId", 1L);
+        user.assignUserId(1L);
         Board savedBoard = Board.create(user, "제목", "내용", java.util.List.of("image.png"), BoardCategory.REVIEW);
-        ReflectionTestUtils.setField(savedBoard, "boardId", 10L);
+        savedBoard.assignBoardId(10L);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(boardRepository.save(any(Board.class))).thenReturn(savedBoard);
@@ -70,9 +69,9 @@ class BoardServiceTest {
     @Test
     void getBoardListReturnsPage() {
         User user = User.create("google-123", "user@gmail.com", "테스터");
-        ReflectionTestUtils.setField(user, "userId", 1L);
+        user.assignUserId(1L);
         Board board = Board.create(user, "제목", "내용", java.util.List.of(), BoardCategory.REVIEW);
-        ReflectionTestUtils.setField(board, "boardId", 10L);
+        board.assignBoardId(10L);
 
         Page<BoardSummaryResponse> boards = new PageImpl<>(
                 java.util.List.of(BoardSummaryResponse.from(board)),
@@ -91,9 +90,9 @@ class BoardServiceTest {
     @Test
     void getBoardListReturnsFilteredPageWhenCategoryExists() {
         User user = User.create("google-123", "user@gmail.com", "테스터");
-        ReflectionTestUtils.setField(user, "userId", 1L);
+        user.assignUserId(1L);
         Board board = Board.create(user, "제목", "내용", java.util.List.of(), BoardCategory.RECIPE);
-        ReflectionTestUtils.setField(board, "boardId", 10L);
+        board.assignBoardId(10L);
 
         Page<BoardSummaryResponse> boards = new PageImpl<>(
                 java.util.List.of(new BoardSummaryResponse(
@@ -124,9 +123,9 @@ class BoardServiceTest {
     @Test
     void searchBoardsByTitleReturnsMatchedBoards() {
         User user = User.create("google-123", "user@gmail.com", "테스터");
-        ReflectionTestUtils.setField(user, "userId", 1L);
+        user.assignUserId(1L);
         Board board = Board.create(user, "김치찌개 맛집", "내용", java.util.List.of(), BoardCategory.REVIEW);
-        ReflectionTestUtils.setField(board, "boardId", 11L);
+        board.assignBoardId(11L);
 
         Page<BoardSummaryResponse> boards = new PageImpl<>(
                 java.util.List.of(BoardSummaryResponse.from(board)),
@@ -143,9 +142,9 @@ class BoardServiceTest {
     @Test
     void searchBoardsByTitleReturnsMatchedBoardsInCategory() {
         User user = User.create("google-123", "user@gmail.com", "테스터");
-        ReflectionTestUtils.setField(user, "userId", 1L);
+        user.assignUserId(1L);
         Board board = Board.create(user, "김치찌개 레시피", "내용", java.util.List.of(), BoardCategory.RECIPE);
-        ReflectionTestUtils.setField(board, "boardId", 11L);
+        board.assignBoardId(11L);
 
         Page<BoardSummaryResponse> boards = new PageImpl<>(
                 java.util.List.of(new BoardSummaryResponse(
@@ -176,9 +175,9 @@ class BoardServiceTest {
     @Test
     void getMyBoardListReturnsCurrentUserBoards() {
         User user = User.create("google-123", "user@gmail.com", "테스터");
-        ReflectionTestUtils.setField(user, "userId", 1L);
+        user.assignUserId(1L);
         Board board = Board.create(user, "내 게시글", "내용", java.util.List.of(), BoardCategory.REVIEW);
-        ReflectionTestUtils.setField(board, "boardId", 12L);
+        board.assignBoardId(12L);
 
         Page<BoardSummaryResponse> boards = new PageImpl<>(
                 java.util.List.of(new BoardSummaryResponse(
@@ -211,9 +210,9 @@ class BoardServiceTest {
     @Test
     void getBoardReturnsDetailWhenBoardExists() {
         User user = User.create("google-123", "user@gmail.com", "테스터");
-        ReflectionTestUtils.setField(user, "userId", 1L);
+        user.assignUserId(1L);
         Board board = Board.create(user, "제목", "내용", java.util.List.of(), BoardCategory.QNA);
-        ReflectionTestUtils.setField(board, "boardId", 10L);
+        board.assignBoardId(10L);
 
         when(boardRepository.findResponseByIdWithCounts(1L, 10L)).thenReturn(Optional.of(new BoardResponse(
                 10L,
@@ -242,11 +241,11 @@ class BoardServiceTest {
     @Test
     void updateBoardThrowsWhenCurrentUserIsNotOwner() {
         User owner = User.create("google-123", "user@gmail.com", "테스터");
-        ReflectionTestUtils.setField(owner, "userId", 1L);
+        owner.assignUserId(1L);
         User other = User.create("google-456", "other@gmail.com", "다른유저");
-        ReflectionTestUtils.setField(other, "userId", 2L);
+        other.assignUserId(2L);
         Board board = Board.create(owner, "제목", "내용", java.util.List.of(), BoardCategory.REVIEW);
-        ReflectionTestUtils.setField(board, "boardId", 10L);
+        board.assignBoardId(10L);
 
         when(boardRepository.findById(10L)).thenReturn(Optional.of(board));
 
@@ -259,9 +258,9 @@ class BoardServiceTest {
     @Test
     void deleteBoardDeletesWhenCurrentUserIsOwner() {
         User user = User.create("google-123", "user@gmail.com", "테스터");
-        ReflectionTestUtils.setField(user, "userId", 1L);
+        user.assignUserId(1L);
         Board board = Board.create(user, "제목", "내용", java.util.List.of(), BoardCategory.REVIEW);
-        ReflectionTestUtils.setField(board, "boardId", 10L);
+        board.assignBoardId(10L);
 
         when(boardRepository.findById(10L)).thenReturn(Optional.of(board));
 
