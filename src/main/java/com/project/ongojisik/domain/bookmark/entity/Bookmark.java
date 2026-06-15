@@ -52,4 +52,8 @@ public class Bookmark {
     public static Bookmark create(User user, Board board) {
         return new Bookmark(user, board, LocalDateTime.now());
     }
+
+    public void assignBookmarkId(Long bookmarkId) {
+        this.bookmarkId = bookmarkId;
+    }
 }

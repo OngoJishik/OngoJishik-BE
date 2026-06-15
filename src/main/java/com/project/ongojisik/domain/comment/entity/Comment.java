@@ -64,4 +64,8 @@ public class Comment {
         this.commentContent = commentContent;
         this.updatedAt = LocalDateTime.now();
     }
+
+    public void assignCommentId(Long commentId) {
+        this.commentId = commentId;
+    }
 }
