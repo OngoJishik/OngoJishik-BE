@@ -27,7 +27,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class CommentServiceTest {
@@ -143,19 +142,21 @@ class CommentServiceTest {
 
     private User createUser(Long userId) {
         User user = User.create("google-" + userId, "user" + userId + "@gmail.com", "테스터" + userId);
-        ReflectionTestUtils.setField(user, "userId", userId);
+        user.assignUserId(userId);
         return user;
     }
 
     private Board createBoard(Long boardId, User user, String title) {
-        Board board = Board.create(user, title, "내용", null, BoardCategory.REVIEW);
+        Board board = Board.create(user, title, "내용", java.util.List.of(), BoardCategory.REVIEW);
+        board.assignBoardId(boardId);
+        Board board = Board.create(user, title, "내용", null);
         ReflectionTestUtils.setField(board, "boardId", boardId);
         return board;
     }
 
     private Comment createComment(Long commentId, Board board, User user, String content) {
         Comment comment = Comment.create(board, user, content);
-        ReflectionTestUtils.setField(comment, "commentId", commentId);
+        comment.assignCommentId(commentId);
         return comment;
     }
 }

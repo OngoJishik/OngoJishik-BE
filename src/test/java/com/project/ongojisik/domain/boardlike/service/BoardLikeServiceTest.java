@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class BoardLikeServiceTest {
@@ -104,13 +103,14 @@ class BoardLikeServiceTest {
 
     private User createUser(Long userId) {
         User user = User.create("google-" + userId, "user" + userId + "@gmail.com", "테스터" + userId);
-        ReflectionTestUtils.setField(user, "userId", userId);
+        user.assignUserId(userId);
         return user;
     }
 
     private Board createBoard(Long boardId, User user) {
-        Board board = Board.create(user, "제목", "내용", null, BoardCategory.REVIEW);
-        ReflectionTestUtils.setField(board, "boardId", boardId);
+        Board board = Board.create(user, "제목", "내용", java.util.List.of(), BoardCategory.REVIEW);
+        board.assignBoardId(boardId);
+        Board board = Board.create(user, "제목", "내용", null);
         return board;
     }
 }
