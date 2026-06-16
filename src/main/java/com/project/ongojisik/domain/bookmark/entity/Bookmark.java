@@ -56,4 +56,8 @@ public class Bookmark {
     public void assignBookmarkId(Long bookmarkId) {
         this.bookmarkId = bookmarkId;
     }
+
+    public void assignBookmarkId(Long bookmarkId) {
+        this.bookmarkId = bookmarkId;
+    }
 }
