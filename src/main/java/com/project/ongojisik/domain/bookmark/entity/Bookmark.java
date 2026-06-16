@@ -53,11 +53,4 @@ public class Bookmark {
         return new Bookmark(user, food, LocalDateTime.now());
     }
 
-    public void assignBookmarkId(Long bookmarkId) {
-        this.bookmarkId = bookmarkId;
-    }
-
-    public void assignBookmarkId(Long bookmarkId) {
-        this.bookmarkId = bookmarkId;
-    }
 }
