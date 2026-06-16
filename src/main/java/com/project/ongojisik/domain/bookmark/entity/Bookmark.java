@@ -1,6 +1,6 @@
 package com.project.ongojisik.domain.bookmark.entity;
 
-import com.project.ongojisik.domain.board.entity.Board;
+import com.project.ongojisik.domain.analysis.entity.Food;
 import com.project.ongojisik.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,38 +19,42 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @Table(
-        name = "bookmarks",
+        name = "bookmark",
         uniqueConstraints = @UniqueConstraint(
-                name = "uk_bookmarks_user_board",
-                columnNames = {"user_id", "board_id"}
+                name = "uk_bookmark_user_food",
+                columnNames = {"user_id", "food_id"}
         )
 )
 public class Bookmark {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "bookmark_id", nullable = false)
-    private Long bookmarkId;
+    @Column(name = "favorite_id", nullable = false)
+    private Long favoriteId;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "board_id", nullable = false)
-    private Board board;
+    @JoinColumn(name = "food_id", nullable = false)
+    private Food food;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    private Bookmark(User user, Board board, LocalDateTime createdAt) {
+    private Bookmark(User user, Food food, LocalDateTime createdAt) {
         this.user = user;
-        this.board = board;
+        this.food = food;
         this.createdAt = createdAt;
     }
 
-    public static Bookmark create(User user, Board board) {
-        return new Bookmark(user, board, LocalDateTime.now());
+    public static Bookmark create(User user, Food food) {
+        return new Bookmark(user, food, LocalDateTime.now());
+    }
+
+    public void assignBookmarkId(Long bookmarkId) {
+        this.bookmarkId = bookmarkId;
     }
 
     public void assignBookmarkId(Long bookmarkId) {

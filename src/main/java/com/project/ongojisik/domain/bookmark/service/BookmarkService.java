@@ -1,7 +1,7 @@
 package com.project.ongojisik.domain.bookmark.service;
 
-import com.project.ongojisik.domain.board.entity.Board;
-import com.project.ongojisik.domain.board.repository.BoardRepository;
+import com.project.ongojisik.domain.analysis.entity.Food;
+import com.project.ongojisik.domain.analysis.repository.FoodRepository;
 import com.project.ongojisik.domain.bookmark.dto.BookmarkResponse;
 import com.project.ongojisik.domain.bookmark.entity.Bookmark;
 import com.project.ongojisik.domain.bookmark.repository.BookmarkRepository;
@@ -9,9 +9,8 @@ import com.project.ongojisik.domain.user.entity.User;
 import com.project.ongojisik.domain.user.repository.UserRepository;
 import com.project.ongojisik.global.exception.APIException;
 import com.project.ongojisik.global.exception.ErrorCode;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,47 +19,43 @@ import org.springframework.transaction.annotation.Transactional;
 public class BookmarkService {
 
     private final BookmarkRepository bookmarkRepository;
-    private final BoardRepository boardRepository;
+    private final FoodRepository foodRepository;
     private final UserRepository userRepository;
 
     @Transactional
-    public BookmarkResponse addBookmark(Long userId, Long boardId) {
-        User user = findCurrentUser(userId);
-        Board board = findBoard(boardId);
+    public BookmarkResponse addBookmark(Long userId, String foodId) {
+        User user = findUser(userId);
+        Food food = findFood(foodId);
 
-        if (bookmarkRepository.existsByUserUserIdAndBoardBoardId(userId, boardId)) {
+        if (bookmarkRepository.existsByUserUserIdAndFoodFoodId(userId, foodId)) {
             throw new APIException(ErrorCode.BOOKMARK_ALREADY_EXISTS);
         }
 
-        Bookmark bookmark = Bookmark.create(user, board);
-        return BookmarkResponse.from(bookmarkRepository.save(bookmark));
+        return BookmarkResponse.from(bookmarkRepository.save(Bookmark.create(user, food)));
     }
 
     @Transactional
-    public void deleteBookmark(Long userId, Long boardId) {
-        Bookmark bookmark = findBookmark(userId, boardId);
+    public void deleteBookmark(Long userId, String foodId) {
+        Bookmark bookmark = bookmarkRepository.findByUserUserIdAndFoodFoodId(userId, foodId)
+                .orElseThrow(() -> new APIException(ErrorCode.BOOKMARK_NOT_FOUND));
         bookmarkRepository.delete(bookmark);
     }
 
     @Transactional(readOnly = true)
-    public Page<BookmarkResponse> getBookmarkList(Long userId, Pageable pageable) {
-        findCurrentUser(userId);
-        return bookmarkRepository.findByUserUserId(userId, pageable)
-                .map(BookmarkResponse::from);
+    public List<BookmarkResponse> getBookmarks(Long userId) {
+        findUser(userId);
+        return bookmarkRepository.findByUserUserIdOrderByCreatedAtDesc(userId).stream()
+                .map(BookmarkResponse::from)
+                .toList();
     }
 
-    private Bookmark findBookmark(Long userId, Long boardId) {
-        return bookmarkRepository.findByUserUserIdAndBoardBoardId(userId, boardId)
-                .orElseThrow(() -> new APIException(ErrorCode.BOOKMARK_NOT_FOUND));
-    }
-
-    private Board findBoard(Long boardId) {
-        return boardRepository.findById(boardId)
-                .orElseThrow(() -> new APIException(ErrorCode.BOARD_NOT_FOUND));
-    }
-
-    private User findCurrentUser(Long userId) {
+    private User findUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new APIException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    private Food findFood(String foodId) {
+        return foodRepository.findById(foodId)
+                .orElseThrow(() -> new APIException(ErrorCode.FOOD_NOT_FOUND));
     }
 }

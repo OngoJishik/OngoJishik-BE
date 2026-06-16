@@ -28,6 +28,8 @@ public enum ErrorCode {
     NOT_FOUND(404, "NOT_FOUND", "요청한 자원이 존재하지 않습니다."),
     USER_NOT_FOUND(404, "USER_NOT_FOUND", "해당 사용자를 찾을 수 없습니다."),
     BOARD_NOT_FOUND(404, "BOARD_NOT_FOUND", "게시글을 찾을 수 없습니다."),
+    FOOD_NOT_FOUND(404, "FOOD_NOT_FOUND", "음식 정보를 찾을 수 없습니다."),
+    SEARCH_HISTORY_NOT_FOUND(404, "SEARCH_HISTORY_NOT_FOUND", "검색 기록을 찾을 수 없습니다."),
     BOOKMARK_NOT_FOUND(404, "BOOKMARK_NOT_FOUND", "즐겨찾기한 게시글을 찾을 수 없습니다."),
     COMMENT_NOT_FOUND(404, "COMMENT_NOT_FOUND", "댓글을 찾을 수 없습니다."),
 
@@ -44,6 +46,9 @@ public enum ErrorCode {
     //500 오류
     GOOGLE_CLIENT_ID_NOT_CONFIGURED(500, "GOOGLE_CLIENT_ID_NOT_CONFIGURED", "구글 OAuth 클라이언트 ID가 설정되지 않았습니다."),
     GOOGLE_TOKEN_VERIFICATION_FAILED(500, "GOOGLE_TOKEN_VERIFICATION_FAILED", "구글 토큰 검증 중 오류가 발생했습니다."),
+    LLM_NOT_CONFIGURED(500, "LLM_NOT_CONFIGURED", "LLM API 키가 설정되지 않았습니다."),
+    LLM_REQUEST_FAILED(502, "LLM_REQUEST_FAILED", "LLM 요청 처리 중 오류가 발생했습니다."),
+    LLM_INVALID_RESPONSE(502, "LLM_INVALID_RESPONSE", "LLM 응답이 유효하지 않습니다."),
     INTERNAL_SERVER_ERROR(500, "INTERNAL_SERVER_ERROR", "서버 내부 오류가 발생했습니다."),
     UNKNOWN_ERROR(500, "UNKNOWN_ERROR", "예기치 못한 오류가 발생했습니다.");
 
