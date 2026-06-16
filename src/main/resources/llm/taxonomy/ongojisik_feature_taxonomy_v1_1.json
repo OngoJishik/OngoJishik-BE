@@ -1,0 +1,1363 @@
+{
+  "version": "1.1",
+  "language": "ko",
+  "purpose": "온고지식 전통 음식 추천에서 사용자 자연어 요구사항을 제한된 특징 label 목록으로 추출하기 위한 허용 특징 사전",
+  "changes_from_v1": [
+    "주재료 그룹 제거",
+    "식감 그룹 제거",
+    "색감 label을 '빨간색' 형태에서 '빨강' 형태로 변경",
+    "색감에 '다채로운' 추가"
+  ],
+  "llm_output_rule": {
+    "allowed_output_values": "각 feature의 label 값만 사용한다.",
+    "do_not_create_new_feature": true,
+    "when_uncertain": "문장에 근거가 약하면 선택하지 않는다.",
+    "recommended_output_format": {
+      "features": [
+        "매운맛",
+        "빨강",
+        "국류",
+        "손님접대"
+      ],
+      "categories": [
+        "국/탕류"
+      ]
+    }
+  },
+  "total_feature_count": 136,
+  "feature_groups": [
+    {
+      "group_id": "taste",
+      "group_name": "맛",
+      "selection_rule": "사용자 문장에서 직접 드러난 맛 표현만 선택한다. 비슷한 표현은 aliases를 참고하되 label 값으로만 반환한다.",
+      "features": [
+        {
+          "id": "taste_spicy",
+          "label": "매운맛",
+          "aliases": [
+            "맵다",
+            "매콤",
+            "칼칼",
+            "얼큰",
+            "화끈한"
+          ],
+          "description": "고추, 고춧가루, 고추장 등으로 매운 느낌"
+        },
+        {
+          "id": "taste_mild_spicy",
+          "label": "약간매운맛",
+          "aliases": [
+            "살짝 매콤",
+            "덜 매운",
+            "부담 없는 매운맛"
+          ],
+          "description": "강하지 않은 매운맛"
+        },
+        {
+          "id": "taste_sweet",
+          "label": "단맛",
+          "aliases": [
+            "달달",
+            "달콤",
+            "꿀맛"
+          ],
+          "description": "설탕, 꿀, 과일 등에서 느껴지는 단맛"
+        },
+        {
+          "id": "taste_savory",
+          "label": "짭짤한맛",
+          "aliases": [
+            "짭조름",
+            "간간한",
+            "간이 있는"
+          ],
+          "description": "소금, 장, 젓갈 등으로 간이 느껴지는 맛"
+        },
+        {
+          "id": "taste_sour",
+          "label": "신맛",
+          "aliases": [
+            "새콤",
+            "시큼",
+            "상큼한 산미"
+          ],
+          "description": "식초, 발효, 과일 등에서 느껴지는 산미"
+        },
+        {
+          "id": "taste_bitter",
+          "label": "쓴맛",
+          "aliases": [
+            "쌉싸름",
+            "씁쓸"
+          ],
+          "description": "나물, 약재 등에서 느껴지는 쓴맛"
+        },
+        {
+          "id": "taste_umami",
+          "label": "감칠맛",
+          "aliases": [
+            "깊은맛",
+            "입에 감기는 맛",
+            "진한 맛"
+          ],
+          "description": "육수, 장, 해산물 등에서 나오는 풍부한 맛"
+        },
+        {
+          "id": "taste_clean",
+          "label": "깔끔한맛",
+          "aliases": [
+            "개운한",
+            "담백하고 깨끗한"
+          ],
+          "description": "뒷맛이 무겁지 않고 정돈된 맛"
+        },
+        {
+          "id": "taste_plain",
+          "label": "담백한맛",
+          "aliases": [
+            "슴슴한",
+            "자극적이지 않은",
+            "순한"
+          ],
+          "description": "간이 세지 않고 부담이 적은 맛"
+        },
+        {
+          "id": "taste_rich",
+          "label": "진한맛",
+          "aliases": [
+            "농후한",
+            "깊고 진한",
+            "묵직한"
+          ],
+          "description": "육수나 양념의 맛이 강하고 깊은 맛"
+        },
+        {
+          "id": "taste_garlic",
+          "label": "마늘향",
+          "aliases": [
+            "마늘맛",
+            "알싸한 마늘"
+          ],
+          "description": "마늘 향이나 맛이 두드러지는 경우"
+        },
+        {
+          "id": "taste_sesame",
+          "label": "고소한맛",
+          "aliases": [
+            "깨소금",
+            "참기름 향",
+            "견과류 같은"
+          ],
+          "description": "깨, 참기름, 콩, 견과류에서 느껴지는 고소함"
+        },
+        {
+          "id": "taste_smoky",
+          "label": "불향",
+          "aliases": [
+            "훈연향",
+            "그을린 향",
+            "숯불향"
+          ],
+          "description": "불이나 숯에서 나는 향"
+        },
+        {
+          "id": "taste_fermented",
+          "label": "발효향",
+          "aliases": [
+            "쿰쿰한",
+            "장맛",
+            "숙성된 맛"
+          ],
+          "description": "된장, 간장, 김치, 젓갈 등 발효식품의 향"
+        },
+        {
+          "id": "taste_sea",
+          "label": "바다향",
+          "aliases": [
+            "해산물맛",
+            "해물맛",
+            "시원한 해물"
+          ],
+          "description": "생선, 조개, 멸치, 다시마 등 해산물의 맛"
+        },
+        {
+          "id": "taste_meaty",
+          "label": "육향",
+          "aliases": [
+            "고기맛",
+            "고깃국물",
+            "육수맛"
+          ],
+          "description": "고기나 뼈 육수에서 나는 맛"
+        },
+        {
+          "id": "taste_refreshing",
+          "label": "시원한맛",
+          "aliases": [
+            "속 풀리는",
+            "개운한 국물",
+            "청량한"
+          ],
+          "description": "국물이나 냉음식에서 느껴지는 시원함"
+        },
+        {
+          "id": "taste_oily",
+          "label": "기름진맛",
+          "aliases": [
+            "느끼한",
+            "고지방",
+            "기름기 있는"
+          ],
+          "description": "기름이나 지방감이 뚜렷한 맛"
+        },
+        {
+          "id": "taste_light",
+          "label": "가벼운맛",
+          "aliases": [
+            "부담 없는",
+            "산뜻한",
+            "라이트한"
+          ],
+          "description": "무겁지 않고 쉽게 먹을 수 있는 맛"
+        },
+        {
+          "id": "taste_heavy",
+          "label": "묵직한맛",
+          "aliases": [
+            "든든한 맛",
+            "무거운 맛"
+          ],
+          "description": "포만감과 농도가 강한 맛"
+        },
+        {
+          "id": "taste_herbal",
+          "label": "약재향",
+          "aliases": [
+            "한방향",
+            "인삼향",
+            "대추향"
+          ],
+          "description": "한방 재료나 약재의 향"
+        },
+        {
+          "id": "taste_nutty",
+          "label": "견과류맛",
+          "aliases": [
+            "밤맛",
+            "잣향",
+            "호두맛"
+          ],
+          "description": "견과류나 밤, 잣의 고소한 맛"
+        },
+        {
+          "id": "taste_fruity",
+          "label": "과일향",
+          "aliases": [
+            "과일맛",
+            "상큼한 향"
+          ],
+          "description": "과일에서 나는 향과 단맛"
+        },
+        {
+          "id": "taste_beany",
+          "label": "콩맛",
+          "aliases": [
+            "두부맛",
+            "콩비린내",
+            "콩 향"
+          ],
+          "description": "콩, 두부, 된장 등 콩 계열의 맛"
+        },
+        {
+          "id": "taste_pungent",
+          "label": "알싸한맛",
+          "aliases": [
+            "톡 쏘는",
+            "겨자맛",
+            "파 향"
+          ],
+          "description": "겨자, 파, 마늘, 생강 등에서 오는 알싸함"
+        },
+        {
+          "id": "taste_balanced",
+          "label": "균형잡힌맛",
+          "aliases": [
+            "조화로운",
+            "맛이 무난한"
+          ],
+          "description": "특정 맛이 과하게 튀지 않고 조화로운 맛"
+        },
+        {
+          "id": "taste_broth",
+          "label": "육수맛",
+          "aliases": [
+            "국물맛",
+            "멸치육수",
+            "고기육수"
+          ],
+          "description": "국물 베이스가 중심이 되는 맛"
+        }
+      ]
+    },
+    {
+      "group_id": "color",
+      "group_name": "색감",
+      "selection_rule": "음식의 대표적인 시각적 색을 선택한다. label은 '00색'보다 짧은 색 이름으로 반환한다.",
+      "features": [
+        {
+          "id": "color_red",
+          "label": "빨강",
+          "aliases": [
+            "빨간",
+            "붉은",
+            "빨갛게",
+            "고춧가루색",
+            "고추장색"
+          ],
+          "description": "고추장, 고춧가루, 김치 등으로 붉은 색감"
+        },
+        {
+          "id": "color_orange",
+          "label": "주황",
+          "aliases": [
+            "오렌지",
+            "노란빛 빨강",
+            "호박빛"
+          ],
+          "description": "호박, 당근, 고추장 등이 섞인 주황빛"
+        },
+        {
+          "id": "color_yellow",
+          "label": "노랑",
+          "aliases": [
+            "노란",
+            "노르스름",
+            "황금빛"
+          ],
+          "description": "달걀, 호박, 튀김옷 등 노란 색감"
+        },
+        {
+          "id": "color_green",
+          "label": "초록",
+          "aliases": [
+            "푸른",
+            "녹색",
+            "나물색"
+          ],
+          "description": "채소, 나물, 쑥 등 초록 색감"
+        },
+        {
+          "id": "color_white",
+          "label": "하양",
+          "aliases": [
+            "하얀",
+            "흰",
+            "맑은 흰빛"
+          ],
+          "description": "쌀, 두부, 흰 국물 등 흰 색감"
+        },
+        {
+          "id": "color_black",
+          "label": "검정",
+          "aliases": [
+            "까만",
+            "흑색",
+            "검은"
+          ],
+          "description": "검은깨, 흑임자, 먹물 등 검은 색감"
+        },
+        {
+          "id": "color_brown",
+          "label": "갈색",
+          "aliases": [
+            "간장색",
+            "구운색",
+            "짙은 갈색"
+          ],
+          "description": "간장, 구이, 조림에서 나는 갈색"
+        },
+        {
+          "id": "color_golden",
+          "label": "노릇함",
+          "aliases": [
+            "노릇노릇",
+            "바삭하게 구운 색",
+            "황금빛"
+          ],
+          "description": "전, 튀김, 구이의 노릇한 색"
+        },
+        {
+          "id": "color_clear",
+          "label": "맑음",
+          "aliases": [
+            "투명한 국물",
+            "맑은 국물",
+            "투명"
+          ],
+          "description": "탁하지 않은 맑은 국물 색"
+        },
+        {
+          "id": "color_dark",
+          "label": "진함",
+          "aliases": [
+            "짙은 색",
+            "어두운 색",
+            "색이 진한"
+          ],
+          "description": "양념이나 장이 강해 색이 진한 상태"
+        },
+        {
+          "id": "color_pale",
+          "label": "연함",
+          "aliases": [
+            "옅은 색",
+            "부드러운 색",
+            "색이 연한"
+          ],
+          "description": "색이 강하지 않고 은은한 상태"
+        },
+        {
+          "id": "color_colorful",
+          "label": "다채로운",
+          "aliases": [
+            "알록달록",
+            "색감이 다양한",
+            "화려한 색",
+            "여러 색"
+          ],
+          "description": "여러 재료가 섞여 다양한 색감"
+        },
+        {
+          "id": "color_purple",
+          "label": "보라",
+          "aliases": [
+            "자주",
+            "가지색",
+            "자색"
+          ],
+          "description": "가지, 자색고구마 등 보라빛"
+        },
+        {
+          "id": "color_pink",
+          "label": "분홍",
+          "aliases": [
+            "핑크",
+            "연분홍"
+          ],
+          "description": "꽃, 과일, 색소 등으로 분홍빛"
+        },
+        {
+          "id": "color_beige",
+          "label": "베이지",
+          "aliases": [
+            "연갈색",
+            "누런빛",
+            "담황색"
+          ],
+          "description": "곡물, 죽, 면 등에서 보이는 부드러운 베이지 색감"
+        }
+      ]
+    },
+    {
+      "group_id": "temperature_weight",
+      "group_name": "온도와 무게감",
+      "selection_rule": "음식의 온도, 포만감, 부담감과 관련된 표현을 선택한다.",
+      "features": [
+        {
+          "id": "temp_hot",
+          "label": "따뜻한",
+          "aliases": [
+            "뜨끈한",
+            "뜨거운",
+            "온기 있는"
+          ],
+          "description": "따뜻하게 먹는 음식"
+        },
+        {
+          "id": "temp_cold",
+          "label": "차가운",
+          "aliases": [
+            "시원한",
+            "냉",
+            "차갑게 먹는"
+          ],
+          "description": "차갑게 먹는 음식"
+        },
+        {
+          "id": "temp_room",
+          "label": "상온",
+          "aliases": [
+            "식어도 괜찮은",
+            "실온"
+          ],
+          "description": "상온에서도 먹기 좋은 음식"
+        },
+        {
+          "id": "weight_light",
+          "label": "가벼운",
+          "aliases": [
+            "간단한",
+            "부담 없는"
+          ],
+          "description": "양이나 맛이 부담스럽지 않은 음식"
+        },
+        {
+          "id": "weight_filling",
+          "label": "든든한",
+          "aliases": [
+            "포만감 있는",
+            "배부른"
+          ],
+          "description": "한 끼로 충분한 음식"
+        },
+        {
+          "id": "weight_heavy",
+          "label": "무거운",
+          "aliases": [
+            "진득한",
+            "속이 찬"
+          ],
+          "description": "기름기나 양이 있어 무겁게 느껴지는 음식"
+        },
+        {
+          "id": "weight_low_burden",
+          "label": "속편한",
+          "aliases": [
+            "소화 잘 되는",
+            "위에 부담 없는"
+          ],
+          "description": "속에 부담이 적은 음식"
+        },
+        {
+          "id": "weight_energy",
+          "label": "기력보충",
+          "aliases": [
+            "보양",
+            "힘나는",
+            "원기회복"
+          ],
+          "description": "몸을 보충하는 느낌의 음식"
+        },
+        {
+          "id": "weight_snack",
+          "label": "간식용",
+          "aliases": [
+            "출출할 때",
+            "가볍게 먹는"
+          ],
+          "description": "식사보다는 간식에 가까운 음식"
+        },
+        {
+          "id": "weight_meal",
+          "label": "식사용",
+          "aliases": [
+            "한 끼",
+            "밥으로 먹는"
+          ],
+          "description": "주식 또는 한 끼 식사로 먹는 음식"
+        }
+      ]
+    },
+    {
+      "group_id": "cooking_method",
+      "group_name": "조리방식",
+      "selection_rule": "음식이 만들어지는 핵심 조리 방식을 선택한다.",
+      "features": [
+        {
+          "id": "cook_boiled",
+          "label": "끓인",
+          "aliases": [
+            "삶은",
+            "국물로 끓인"
+          ],
+          "description": "물이나 육수에 끓여 조리"
+        },
+        {
+          "id": "cook_simmered",
+          "label": "조린",
+          "aliases": [
+            "간장에 졸인",
+            "양념에 졸인"
+          ],
+          "description": "양념을 넣고 국물을 줄이며 조리"
+        },
+        {
+          "id": "cook_steamed",
+          "label": "찐",
+          "aliases": [
+            "증기로 익힌",
+            "찜"
+          ],
+          "description": "증기나 수분으로 익힘"
+        },
+        {
+          "id": "cook_grilled",
+          "label": "구운",
+          "aliases": [
+            "불에 구운",
+            "팬에 구운"
+          ],
+          "description": "불이나 팬으로 구움"
+        },
+        {
+          "id": "cook_pan_fried",
+          "label": "부친",
+          "aliases": [
+            "전으로 부친",
+            "지진"
+          ],
+          "description": "기름을 두르고 납작하게 익힘"
+        },
+        {
+          "id": "cook_fried",
+          "label": "튀긴",
+          "aliases": [
+            "기름에 튀긴",
+            "바삭하게 튀긴"
+          ],
+          "description": "많은 기름에 튀겨 조리"
+        },
+        {
+          "id": "cook_stir_fried",
+          "label": "볶은",
+          "aliases": [
+            "기름에 볶은",
+            "양념 볶음"
+          ],
+          "description": "팬에서 빠르게 볶아 조리"
+        },
+        {
+          "id": "cook_raw",
+          "label": "생으로먹는",
+          "aliases": [
+            "날것",
+            "익히지 않은"
+          ],
+          "description": "가열하지 않고 먹음"
+        },
+        {
+          "id": "cook_blanced",
+          "label": "데친",
+          "aliases": [
+            "살짝 익힌",
+            "끓는 물에 데친"
+          ],
+          "description": "짧게 익혀 식감과 색을 살림"
+        },
+        {
+          "id": "cook_pickled",
+          "label": "절인",
+          "aliases": [
+            "장아찌",
+            "소금에 절인"
+          ],
+          "description": "소금, 장, 식초 등에 절임"
+        },
+        {
+          "id": "cook_fermented",
+          "label": "발효한",
+          "aliases": [
+            "숙성한",
+            "익힌 김치"
+          ],
+          "description": "시간을 두고 발효 또는 숙성"
+        },
+        {
+          "id": "cook_dried",
+          "label": "말린",
+          "aliases": [
+            "건조한",
+            "건어물"
+          ],
+          "description": "수분을 제거해 말림"
+        },
+        {
+          "id": "cook_roasted",
+          "label": "덖은",
+          "aliases": [
+            "볶아말린",
+            "마른 팬에 볶은"
+          ],
+          "description": "기름 없이 볶거나 덖음"
+        },
+        {
+          "id": "cook_mixed",
+          "label": "무친",
+          "aliases": [
+            "양념에 버무린",
+            "나물 무침"
+          ],
+          "description": "재료에 양념을 섞어 조리"
+        },
+        {
+          "id": "cook_wrapped",
+          "label": "싼",
+          "aliases": [
+            "감싼",
+            "쌈"
+          ],
+          "description": "재료를 다른 재료로 감싸 먹음"
+        },
+        {
+          "id": "cook_pounded",
+          "label": "찧은",
+          "aliases": [
+            "빻은",
+            "으깬"
+          ],
+          "description": "재료를 찧거나 으깨서 만듦"
+        },
+        {
+          "id": "cook_kneaded",
+          "label": "반죽한",
+          "aliases": [
+            "빚은",
+            "밀가루 반죽"
+          ],
+          "description": "가루나 재료를 반죽해 형태를 만듦"
+        },
+        {
+          "id": "cook_braised",
+          "label": "푹익힌",
+          "aliases": [
+            "오래 끓인",
+            "푹 고은"
+          ],
+          "description": "오랜 시간 익혀 부드럽게 만듦"
+        },
+        {
+          "id": "cook_cold_mixed",
+          "label": "차갑게비빈",
+          "aliases": [
+            "냉채",
+            "차가운 무침"
+          ],
+          "description": "차가운 상태로 양념과 섞음"
+        },
+        {
+          "id": "cook_soup_based",
+          "label": "국물낸",
+          "aliases": [
+            "육수 낸",
+            "국물 우린"
+          ],
+          "description": "육수나 국물을 우려냄"
+        },
+        {
+          "id": "cook_sauce_coated",
+          "label": "양념바른",
+          "aliases": [
+            "양념 묻힌",
+            "소스 입힌"
+          ],
+          "description": "재료 표면에 양념을 발라 조리"
+        },
+        {
+          "id": "cook_smoked",
+          "label": "훈연한",
+          "aliases": [
+            "연기향 입힌",
+            "훈제"
+          ],
+          "description": "연기나 불향을 입힘"
+        },
+        {
+          "id": "cook_pressed",
+          "label": "눌러만든",
+          "aliases": [
+            "압착한",
+            "모양 잡은"
+          ],
+          "description": "재료를 눌러 형태를 만듦"
+        },
+        {
+          "id": "cook_layered",
+          "label": "겹쳐만든",
+          "aliases": [
+            "켜켜이 쌓은",
+            "층을 만든"
+          ],
+          "description": "여러 재료를 층으로 쌓아 만듦"
+        }
+      ]
+    },
+    {
+      "group_id": "dish_type",
+      "group_name": "요리형태",
+      "selection_rule": "음식의 전체적인 형태나 식사 내 역할을 선택한다.",
+      "features": [
+        {
+          "id": "type_rice",
+          "label": "밥류",
+          "aliases": [
+            "밥",
+            "쌀밥",
+            "비빔밥"
+          ],
+          "description": "쌀이나 곡물밥이 중심인 음식"
+        },
+        {
+          "id": "type_porridge",
+          "label": "죽류",
+          "aliases": [
+            "죽",
+            "미음",
+            "묽은 죽"
+          ],
+          "description": "곡물을 끓여 부드럽게 만든 음식"
+        },
+        {
+          "id": "type_noodle",
+          "label": "면류",
+          "aliases": [
+            "국수",
+            "면",
+            "냉면"
+          ],
+          "description": "면이 중심인 음식"
+        },
+        {
+          "id": "type_soup",
+          "label": "국류",
+          "aliases": [
+            "국",
+            "맑은국"
+          ],
+          "description": "국물이 중심인 비교적 가벼운 국"
+        },
+        {
+          "id": "type_tang",
+          "label": "탕류",
+          "aliases": [
+            "탕",
+            "보양탕",
+            "진한 국물"
+          ],
+          "description": "국물이 진하고 재료가 풍부한 탕"
+        },
+        {
+          "id": "type_jjigae",
+          "label": "찌개류",
+          "aliases": [
+            "찌개",
+            "된장찌개",
+            "김치찌개"
+          ],
+          "description": "간이 강하고 건더기가 많은 국물 음식"
+        },
+        {
+          "id": "type_jeongol",
+          "label": "전골류",
+          "aliases": [
+            "전골",
+            "냄비요리"
+          ],
+          "description": "여러 재료를 한 냄비에 끓여 먹는 음식"
+        },
+        {
+          "id": "type_jjim",
+          "label": "찜류",
+          "aliases": [
+            "찜",
+            "찐 요리"
+          ],
+          "description": "증기나 양념으로 익힌 음식"
+        },
+        {
+          "id": "type_gui",
+          "label": "구이류",
+          "aliases": [
+            "구이",
+            "불고기",
+            "석쇠구이"
+          ],
+          "description": "굽는 방식의 음식"
+        },
+        {
+          "id": "type_bokkeum",
+          "label": "볶음류",
+          "aliases": [
+            "볶음",
+            "볶은 요리"
+          ],
+          "description": "팬에서 볶은 음식"
+        },
+        {
+          "id": "type_jorim",
+          "label": "조림류",
+          "aliases": [
+            "조림",
+            "장조림"
+          ],
+          "description": "양념에 졸인 음식"
+        },
+        {
+          "id": "type_jeon",
+          "label": "전류",
+          "aliases": [
+            "전",
+            "부침개",
+            "지짐"
+          ],
+          "description": "반죽이나 재료를 기름에 부친 음식"
+        },
+        {
+          "id": "type_fried",
+          "label": "튀김류",
+          "aliases": [
+            "튀김",
+            "부각"
+          ],
+          "description": "기름에 튀겨 바삭한 음식"
+        },
+        {
+          "id": "type_namul",
+          "label": "나물류",
+          "aliases": [
+            "나물",
+            "무침나물"
+          ],
+          "description": "채소나 산나물을 데치거나 무친 음식"
+        },
+        {
+          "id": "type_muchim",
+          "label": "무침류",
+          "aliases": [
+            "무침",
+            "겉절이"
+          ],
+          "description": "양념에 버무린 음식"
+        },
+        {
+          "id": "type_kimchi",
+          "label": "김치류",
+          "aliases": [
+            "김치",
+            "절임김치"
+          ],
+          "description": "채소를 발효시킨 음식"
+        },
+        {
+          "id": "type_jangajji",
+          "label": "장아찌류",
+          "aliases": [
+            "장아찌",
+            "절임"
+          ],
+          "description": "장이나 식초 등에 절인 저장 음식"
+        },
+        {
+          "id": "type_jang",
+          "label": "장류",
+          "aliases": [
+            "된장",
+            "간장",
+            "고추장"
+          ],
+          "description": "발효 양념이나 장이 중심인 음식"
+        },
+        {
+          "id": "type_tteok",
+          "label": "떡류",
+          "aliases": [
+            "떡",
+            "찰떡",
+            "시루떡"
+          ],
+          "description": "쌀가루나 찹쌀로 만든 음식"
+        },
+        {
+          "id": "type_hangwa",
+          "label": "한과류",
+          "aliases": [
+            "한과",
+            "약과",
+            "유과"
+          ],
+          "description": "전통 과자류"
+        },
+        {
+          "id": "type_beverage",
+          "label": "음청류",
+          "aliases": [
+            "전통음료",
+            "차",
+            "식혜"
+          ],
+          "description": "마시는 전통 음식"
+        },
+        {
+          "id": "type_dessert",
+          "label": "후식류",
+          "aliases": [
+            "디저트",
+            "달콤한 음식"
+          ],
+          "description": "식후나 간식으로 먹는 음식"
+        },
+        {
+          "id": "type_side_dish",
+          "label": "반찬류",
+          "aliases": [
+            "밑반찬",
+            "곁들임"
+          ],
+          "description": "밥과 함께 먹는 반찬"
+        },
+        {
+          "id": "type_main_dish",
+          "label": "주요리",
+          "aliases": [
+            "메인요리",
+            "중심 음식"
+          ],
+          "description": "식사의 중심이 되는 음식"
+        },
+        {
+          "id": "type_snack",
+          "label": "간식류",
+          "aliases": [
+            "간식",
+            "출출할 때"
+          ],
+          "description": "식사 외에 가볍게 먹는 음식"
+        },
+        {
+          "id": "type_street_food",
+          "label": "길거리음식",
+          "aliases": [
+            "시장 음식",
+            "분식 느낌"
+          ],
+          "description": "가볍게 사 먹기 좋은 음식"
+        },
+        {
+          "id": "type_wrap",
+          "label": "쌈류",
+          "aliases": [
+            "쌈",
+            "싸먹는 음식"
+          ],
+          "description": "재료를 잎채소나 전병 등에 싸 먹는 음식"
+        },
+        {
+          "id": "type_mandu",
+          "label": "만두류",
+          "aliases": [
+            "만두",
+            "소를 넣은 음식"
+          ],
+          "description": "피 안에 소를 넣어 만든 음식"
+        }
+      ]
+    },
+    {
+      "group_id": "situation",
+      "group_name": "상황과 목적",
+      "selection_rule": "사용자의 의도, 먹는 상황, 대상, 분위기를 선택한다.",
+      "features": [
+        {
+          "id": "situation_guest",
+          "label": "손님접대",
+          "aliases": [
+            "손님 올 때",
+            "대접용",
+            "초대 음식"
+          ],
+          "description": "손님에게 내놓기 좋은 음식"
+        },
+        {
+          "id": "situation_family",
+          "label": "가족식사",
+          "aliases": [
+            "가족끼리",
+            "집밥",
+            "온가족"
+          ],
+          "description": "가족이 함께 먹기 좋은 음식"
+        },
+        {
+          "id": "situation_alone",
+          "label": "혼밥",
+          "aliases": [
+            "혼자 먹는",
+            "혼자 간단히"
+          ],
+          "description": "혼자 먹기 편한 음식"
+        },
+        {
+          "id": "situation_party",
+          "label": "잔치",
+          "aliases": [
+            "행사",
+            "축하 자리",
+            "모임"
+          ],
+          "description": "여럿이 모이는 특별한 자리"
+        },
+        {
+          "id": "situation_holiday",
+          "label": "명절",
+          "aliases": [
+            "설날",
+            "추석",
+            "제사"
+          ],
+          "description": "명절이나 전통 행사에 어울리는 음식"
+        },
+        {
+          "id": "situation_birthday",
+          "label": "생일",
+          "aliases": [
+            "생일상",
+            "축하 음식"
+          ],
+          "description": "생일에 어울리는 음식"
+        },
+        {
+          "id": "situation_picnic",
+          "label": "나들이",
+          "aliases": [
+            "소풍",
+            "도시락",
+            "야외"
+          ],
+          "description": "야외에서 먹기 좋은 음식"
+        },
+        {
+          "id": "situation_lunchbox",
+          "label": "도시락",
+          "aliases": [
+            "싸가기 좋은",
+            "휴대용"
+          ],
+          "description": "도시락으로 담기 좋은 음식"
+        },
+        {
+          "id": "situation_breakfast",
+          "label": "아침식사",
+          "aliases": [
+            "아침",
+            "가벼운 아침"
+          ],
+          "description": "아침에 먹기 좋은 음식"
+        },
+        {
+          "id": "situation_lunch",
+          "label": "점심식사",
+          "aliases": [
+            "점심",
+            "낮에 먹는"
+          ],
+          "description": "점심 식사로 적합한 음식"
+        },
+        {
+          "id": "situation_dinner",
+          "label": "저녁식사",
+          "aliases": [
+            "저녁",
+            "든든한 저녁"
+          ],
+          "description": "저녁 식사로 적합한 음식"
+        },
+        {
+          "id": "situation_late_night",
+          "label": "야식",
+          "aliases": [
+            "밤에 먹는",
+            "늦은 밤"
+          ],
+          "description": "늦은 시간 먹기 좋은 음식"
+        },
+        {
+          "id": "situation_drink_pairing",
+          "label": "술안주",
+          "aliases": [
+            "막걸리 안주",
+            "소주 안주",
+            "안주"
+          ],
+          "description": "술과 함께 먹기 좋은 음식"
+        },
+        {
+          "id": "situation_recovery",
+          "label": "해장",
+          "aliases": [
+            "속풀이",
+            "숙취",
+            "해장용"
+          ],
+          "description": "술 마신 다음날 속을 풀기 좋은 음식"
+        },
+        {
+          "id": "situation_sick",
+          "label": "아플때",
+          "aliases": [
+            "몸 안 좋을 때",
+            "감기",
+            "입맛 없을 때"
+          ],
+          "description": "몸 상태가 좋지 않을 때 먹기 좋은 음식"
+        },
+        {
+          "id": "situation_digestive",
+          "label": "소화부담적음",
+          "aliases": [
+            "소화 잘 되는",
+            "속 편한"
+          ],
+          "description": "소화 부담이 적은 음식"
+        },
+        {
+          "id": "situation_diet",
+          "label": "가벼운관리식",
+          "aliases": [
+            "다이어트",
+            "칼로리 낮은",
+            "가볍게"
+          ],
+          "description": "무겁지 않게 관리용으로 먹기 좋은 음식"
+        },
+        {
+          "id": "situation_energy",
+          "label": "보양식",
+          "aliases": [
+            "기력 보충",
+            "몸보신",
+            "원기회복"
+          ],
+          "description": "기운을 보충하는 목적의 음식"
+        },
+        {
+          "id": "situation_summer",
+          "label": "여름음식",
+          "aliases": [
+            "더울 때",
+            "시원한 여름"
+          ],
+          "description": "더운 날 어울리는 음식"
+        },
+        {
+          "id": "situation_winter",
+          "label": "겨울음식",
+          "aliases": [
+            "추울 때",
+            "따뜻한 겨울"
+          ],
+          "description": "추운 날 어울리는 음식"
+        },
+        {
+          "id": "situation_rainy",
+          "label": "비오는날",
+          "aliases": [
+            "비 오는 날",
+            "막걸리 생각나는"
+          ],
+          "description": "비 오는 날 분위기에 어울리는 음식"
+        },
+        {
+          "id": "situation_cold_day",
+          "label": "추운날",
+          "aliases": [
+            "몸 녹이는",
+            "뜨끈한"
+          ],
+          "description": "추운 날 몸을 데우는 음식"
+        },
+        {
+          "id": "situation_hot_day",
+          "label": "더운날",
+          "aliases": [
+            "입맛 없는 여름",
+            "시원한"
+          ],
+          "description": "더운 날 먹기 좋은 음식"
+        },
+        {
+          "id": "situation_quick",
+          "label": "간단조리",
+          "aliases": [
+            "빨리 먹는",
+            "간단히",
+            "시간 없을 때"
+          ],
+          "description": "만들거나 먹기 간단한 음식"
+        },
+        {
+          "id": "situation_formal",
+          "label": "격식있는자리",
+          "aliases": [
+            "고급스러운",
+            "정중한 자리"
+          ],
+          "description": "격식 있는 상차림에 어울리는 음식"
+        },
+        {
+          "id": "situation_comfort",
+          "label": "위로음식",
+          "aliases": [
+            "힐링푸드",
+            "마음 편한",
+            "따뜻한 느낌"
+          ],
+          "description": "정서적으로 편안함을 주는 음식"
+        },
+        {
+          "id": "situation_kids",
+          "label": "아이와함께",
+          "aliases": [
+            "아이들이 먹기 좋은",
+            "맵지 않은"
+          ],
+          "description": "아이와 함께 먹기 좋은 음식"
+        },
+        {
+          "id": "situation_elderly",
+          "label": "어르신추천",
+          "aliases": [
+            "부모님",
+            "어른들",
+            "씹기 편한"
+          ],
+          "description": "어르신에게 추천하기 좋은 음식"
+        },
+        {
+          "id": "situation_date",
+          "label": "데이트",
+          "aliases": [
+            "연인",
+            "분위기 있는"
+          ],
+          "description": "데이트 상황에 어울리는 음식"
+        },
+        {
+          "id": "situation_traditional",
+          "label": "전통체험",
+          "aliases": [
+            "한국적인",
+            "전통 느낌"
+          ],
+          "description": "전통성이 잘 드러나는 음식"
+        },
+        {
+          "id": "situation_market",
+          "label": "시장방문",
+          "aliases": [
+            "전통시장",
+            "시장 음식"
+          ],
+          "description": "시장과 연계하기 좋은 음식"
+        },
+        {
+          "id": "situation_beginner",
+          "label": "외국인추천",
+          "aliases": [
+            "외국인도 먹기 좋은",
+            "한국음식 입문"
+          ],
+          "description": "한국 음식에 익숙하지 않은 사람에게 추천하기 좋은 음식"
+        }
+      ]
+    }
+  ]
+}
