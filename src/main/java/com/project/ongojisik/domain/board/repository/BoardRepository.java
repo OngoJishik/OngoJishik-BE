@@ -1,7 +1,6 @@
 package com.project.ongojisik.domain.board.repository;
 
 import com.project.ongojisik.domain.board.entity.Board;
-import com.project.ongojisik.domain.board.entity.BoardCategory;
 import com.project.ongojisik.domain.board.dto.BoardResponse;
 import com.project.ongojisik.domain.board.dto.BoardSummaryResponse;
 import java.util.Optional;
@@ -61,13 +60,17 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                         b.createdAt
                     )
                     from Board b
-                    where b.category = :category
+                    where lower(cast(b.category as string)) like lower(concat('%', :category, '%'))
                     """,
-            countQuery = "select count(b) from Board b where b.category = :category"
+            countQuery = """
+                    select count(b)
+                    from Board b
+                    where lower(cast(b.category as string)) like lower(concat('%', :category, '%'))
+                    """
     )
     Page<BoardSummaryResponse> findSummaryByCategoryWithCounts(
             @Param("userId") Long userId,
-            @Param("category") BoardCategory category,
+            @Param("category") String category,
             Pageable pageable
     );
 
@@ -126,19 +129,19 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                     )
                     from Board b
                     where lower(b.title) like lower(concat('%', :title, '%'))
-                      and b.category = :category
+                      and lower(cast(b.category as string)) like lower(concat('%', :category, '%'))
                     """,
             countQuery = """
                     select count(b)
                     from Board b
                     where lower(b.title) like lower(concat('%', :title, '%'))
-                      and b.category = :category
+                      and lower(cast(b.category as string)) like lower(concat('%', :category, '%'))
                     """
     )
     Page<BoardSummaryResponse> findSummaryByTitleAndCategoryWithCounts(
             @Param("userId") Long userId,
             @Param("title") String title,
-            @Param("category") BoardCategory category,
+            @Param("category") String category,
             Pageable pageable
     );
 
@@ -178,6 +181,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                 b.content,
                 b.imageUrls,
                 b.category,
+                b.recipeId,
                 (select count(bl) from BoardLike bl where bl.board.boardId = b.boardId),
                 (select count(c) from Comment c where c.board.boardId = b.boardId),
                 exists (

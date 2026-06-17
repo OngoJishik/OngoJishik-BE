@@ -4,7 +4,6 @@ import com.project.ongojisik.domain.board.dto.BoardCreateRequest;
 import com.project.ongojisik.domain.board.dto.BoardResponse;
 import com.project.ongojisik.domain.board.dto.BoardSummaryResponse;
 import com.project.ongojisik.domain.board.dto.BoardUpdateRequest;
-import com.project.ongojisik.domain.board.entity.BoardCategory;
 import com.project.ongojisik.domain.board.service.BoardService;
 import com.project.ongojisik.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,7 +36,7 @@ public class BoardController {
 
     private final BoardService boardService;
 
-    @Operation(summary = "게시글 작성", description = "로그인한 사용자가 게시글을 작성합니다.")
+    @Operation(summary = "게시글 작성", description = "로그인한 사용자가 게시글을 작성합니다. category는 사용자 입력 문자열 목록이며, recipeId를 전달하면 해당 사용자가 북마크한 음식 ID를 게시글에 저장합니다.")
     @PostMapping
     public ApiResponse<BoardResponse> createBoard(
             @AuthenticationPrincipal String userId,
@@ -56,7 +55,7 @@ public class BoardController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "DESC") Direction direction,
-            @RequestParam(required = false) BoardCategory category
+            @RequestParam(required = false) String category
     ) {
         Pageable pageable = PageRequest.of(
                 page,
@@ -78,7 +77,7 @@ public class BoardController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "DESC") Direction direction,
-            @RequestParam(required = false) BoardCategory category
+            @RequestParam(required = false) String category
     ) {
         Pageable pageable = PageRequest.of(
                 page,
@@ -127,7 +126,7 @@ public class BoardController {
         );
     }
 
-    @Operation(summary = "게시글 수정", description = "작성자만 게시글을 수정합니다.")
+    @Operation(summary = "게시글 수정", description = "작성자만 게시글을 수정합니다. category는 사용자 입력 문자열 목록이며, recipeId를 전달하면 해당 사용자가 북마크한 음식 ID를 게시글에 저장합니다.")
     @PatchMapping("/{boardId}")
     public ApiResponse<BoardResponse> updateBoard(
             @AuthenticationPrincipal String userId,
