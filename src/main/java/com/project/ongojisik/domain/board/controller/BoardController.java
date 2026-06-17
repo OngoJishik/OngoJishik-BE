@@ -47,7 +47,7 @@ public class BoardController {
         );
     }
 
-    @Operation(summary = "게시글 목록 조회", description = "게시글을 최신순으로 페이지 조회합니다.")
+    @Operation(summary = "게시글 목록 조회", description = "게시글을 최신순으로 페이지 조회합니다. category는 사용자 입력 카테고리 문자열로 필터링합니다.")
     @GetMapping
     public ApiResponse<Page<BoardSummaryResponse>> getBoardList(
             @AuthenticationPrincipal String userId,
@@ -68,7 +68,7 @@ public class BoardController {
         );
     }
 
-    @Operation(summary = "게시글 제목 검색", description = "제목에 포함된 문자열과 카테고리로 게시글을 검색합니다.")
+    @Operation(summary = "게시글 제목 검색", description = "제목에 포함된 문자열로 게시글을 검색합니다. category를 전달하면 해당 카테고리까지 함께 필터링합니다.")
     @GetMapping("/search")
     public ApiResponse<Page<BoardSummaryResponse>> searchBoards(
             @AuthenticationPrincipal String userId,
