@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Search", description = "Food search and recent search history API")
+@Tag(name = "Search", description = "사용자 최근 검색 기록 API")
 @SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequiredArgsConstructor
@@ -24,7 +24,7 @@ public class SearchController {
 
     private final SearchService searchService;
 
-    @Operation(summary = "Get recent searches", description = "Returns recent search histories for the current user.")
+    @Operation(summary = "최근 검색어 목록 조회", description = "현재 로그인한 사용자의 최근 검색 기록 목록을 조회합니다.")
     @GetMapping("/recent")
     public ApiResponse<SearchListResponse> getRecentSearches(
             @AuthenticationPrincipal String userId
@@ -32,7 +32,7 @@ public class SearchController {
         return ApiResponse.success(searchService.getRecentSearches(Long.valueOf(userId)));
     }
 
-    @Operation(summary = "Get recent search result", description = "Returns the recommendation list saved for a recent search.")
+    @Operation(summary = "최근 검색 결과 조회", description = "최근 검색 기록에 저장된 추천 음식 목록을 조회합니다.")
     @GetMapping("/recent/{searchId}")
     public ApiResponse<SearchResponse> getRecentSearchResult(
             @AuthenticationPrincipal String userId,
@@ -41,7 +41,7 @@ public class SearchController {
         return ApiResponse.success(searchService.getRecentSearchResult(Long.valueOf(userId), searchId));
     }
 
-    @Operation(summary = "Delete recent search", description = "Deletes one recent search history.")
+    @Operation(summary = "최근 검색어 단건 삭제", description = "현재 로그인한 사용자의 최근 검색 기록 중 하나를 삭제합니다.")
     @DeleteMapping("/recent/{searchId}")
     public ApiResponse<Void> deleteRecentSearch(
             @AuthenticationPrincipal String userId,
@@ -51,7 +51,7 @@ public class SearchController {
         return ApiResponse.success(null);
     }
 
-    @Operation(summary = "Delete all recent searches", description = "Deletes all recent search histories for the current user.")
+    @Operation(summary = "최근 검색어 전체 삭제", description = "현재 로그인한 사용자의 최근 검색 기록을 모두 삭제합니다.")
     @DeleteMapping("/recent")
     public ApiResponse<Void> deleteAllRecentSearches(
             @AuthenticationPrincipal String userId
