@@ -99,12 +99,12 @@ public record FoodDetailResponse(
 
         private static Source from(Food food) {
             return new Source(
-                    food.getDocCode(),
+                    food.getFoodId(),
                     food.getDocName(),
                     food.getAuthor(),
                     food.getPublishedYear(),
-                    defaultString(food.getDocumentContent()),
-                    ""
+                    defaultString(food.getTransTxt()),
+                    defaultString(food.getOrgFoodUrl())
             );
         }
     }

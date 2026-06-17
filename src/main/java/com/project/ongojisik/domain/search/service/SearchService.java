@@ -6,7 +6,6 @@ import com.project.ongojisik.domain.analysis.entity.Food;
 import com.project.ongojisik.domain.analysis.repository.FoodRepository;
 import com.project.ongojisik.domain.analysis.service.RecommendService;
 import com.project.ongojisik.domain.search.dto.SearchListResponse;
-import com.project.ongojisik.domain.search.dto.SearchRequest;
 import com.project.ongojisik.domain.search.dto.SearchResponse;
 import com.project.ongojisik.domain.search.dto.SearchSummaryResponse;
 import com.project.ongojisik.domain.search.entity.SearchHistory;
@@ -15,7 +14,6 @@ import com.project.ongojisik.domain.user.entity.User;
 import com.project.ongojisik.domain.user.repository.UserRepository;
 import com.project.ongojisik.global.exception.APIException;
 import com.project.ongojisik.global.exception.ErrorCode;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -34,9 +32,13 @@ public class SearchService {
     private final RecommendService recommendService;
 
     @Transactional
-    public SearchResponse search(Long userId, SearchRequest request) {
+    public SearchResponse search(Long userId, String rawQuery) {
+        if (rawQuery == null || rawQuery.isBlank()) {
+            throw new APIException(ErrorCode.MISSING_REQUIRED_FIELD);
+        }
+
         User user = findCurrentUser(userId);
-        String query = request.query().trim();
+        String query = rawQuery.trim();
 
         SearchHistory existingSearchHistory = searchHistoryRepository
                 .findFirstByUserUserIdAndQuery(userId, query)
@@ -50,7 +52,6 @@ public class SearchService {
         List<String> recommendedFoodIds = recommendResponse.recommendations().stream()
                 .map(RecommendFoodResponse::foodId)
                 .toList();
-
         SearchHistory searchHistory = SearchHistory.create(
                 user,
                 recommendResponse.originalQuery(),
@@ -99,7 +100,6 @@ public class SearchService {
                 .filter(foodById::containsKey)
                 .map(foodById::get)
                 .map(RecommendFoodResponse::from)
-                .sorted(Comparator.comparingInt(response -> savedFoodIds.indexOf(response.foodId())))
                 .toList();
     }
 
