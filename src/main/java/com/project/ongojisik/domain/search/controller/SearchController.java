@@ -1,21 +1,17 @@
 package com.project.ongojisik.domain.search.controller;
 
 import com.project.ongojisik.domain.search.dto.SearchListResponse;
-import com.project.ongojisik.domain.search.dto.SearchRequest;
 import com.project.ongojisik.domain.search.dto.SearchResponse;
 import com.project.ongojisik.domain.search.service.SearchService;
 import com.project.ongojisik.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,15 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class SearchController {
 
     private final SearchService searchService;
-
-    @Operation(summary = "Search foods", description = "Searches recommended foods and saves the query in recent searches.")
-    @PostMapping
-    public ApiResponse<SearchResponse> search(
-            @AuthenticationPrincipal String userId,
-            @Valid @RequestBody SearchRequest request
-    ) {
-        return ApiResponse.success(searchService.search(Long.valueOf(userId), request));
-    }
 
     @Operation(summary = "Get recent searches", description = "Returns recent search histories for the current user.")
     @GetMapping("/recent")
