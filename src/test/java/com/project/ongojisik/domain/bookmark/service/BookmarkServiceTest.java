@@ -7,8 +7,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.project.ongojisik.domain.analysis.entity.Food;
+import com.project.ongojisik.domain.analysis.dto.FoodSummaryResponse;
 import com.project.ongojisik.domain.analysis.repository.FoodRepository;
-import com.project.ongojisik.domain.bookmark.dto.BookmarkResponse;
 import com.project.ongojisik.domain.bookmark.entity.Bookmark;
 import com.project.ongojisik.domain.bookmark.repository.BookmarkRepository;
 import com.project.ongojisik.domain.user.entity.User;
@@ -58,7 +58,7 @@ class BookmarkServiceTest {
         when(bookmarkRepository.existsByUserUserIdAndFoodFoodId(USER_ID, FOOD_ID)).thenReturn(false);
         when(bookmarkRepository.save(any(Bookmark.class))).thenReturn(bookmark);
 
-        BookmarkResponse response = bookmarkService.addBookmark(USER_ID, FOOD_ID);
+        FoodSummaryResponse response = bookmarkService.addBookmark(USER_ID, FOOD_ID);
 
         assertThat(response.foodId()).isEqualTo(FOOD_ID);
         verify(bookmarkRepository).save(any(Bookmark.class));
@@ -98,11 +98,11 @@ class BookmarkServiceTest {
         when(bookmarkRepository.findByUserUserIdOrderByCreatedAtDesc(USER_ID))
                 .thenReturn(List.of(bookmark));
 
-        List<BookmarkResponse> response = bookmarkService.getBookmarks(USER_ID);
+        List<FoodSummaryResponse> response = bookmarkService.getBookmarks(USER_ID);
 
         assertThat(response).hasSize(1);
         assertThat(response.get(0).foodId()).isEqualTo(FOOD_ID);
-        assertThat(response.get(0).foodFeature()).isEqualTo("feature-a, feature-b");
+        assertThat(response.get(0).features()).containsExactly("feature-a", "feature-b");
         assertThat(response.get(0).foodPicture()).isEqualTo("image-url");
     }
 

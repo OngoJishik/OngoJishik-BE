@@ -6,7 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.project.ongojisik.domain.analysis.dto.FoodDetailResponse;
-import com.project.ongojisik.domain.analysis.dto.RecommendFoodResponse;
+import com.project.ongojisik.domain.analysis.dto.FoodSummaryResponse;
 import com.project.ongojisik.domain.analysis.dto.RecommendResponse;
 import com.project.ongojisik.domain.analysis.entity.Food;
 import com.project.ongojisik.domain.analysis.llm.FeatureExtractionResult;
@@ -43,7 +43,7 @@ class RecommendServiceTest {
 
         assertEquals(List.of("국/탕류", "매운맛"), response.extractedFeatures());
         assertEquals(List.of("1", "2"), response.recommendations().stream()
-                .map(RecommendFoodResponse::foodId)
+                .map(FoodSummaryResponse::foodId)
                 .toList());
     }
 
@@ -69,7 +69,7 @@ class RecommendServiceTest {
         RecommendResponse response = recommendService.recommend("ranking query");
 
         assertThat(response.recommendations())
-                .extracting(RecommendFoodResponse::foodId)
+                .extracting(FoodSummaryResponse::foodId)
                 .containsExactly("3", "4", "1");
     }
 
@@ -87,7 +87,7 @@ class RecommendServiceTest {
         RecommendResponse response = recommendService.recommend("category query");
 
         assertThat(response.recommendations())
-                .extracting(RecommendFoodResponse::foodId)
+                .extracting(FoodSummaryResponse::foodId)
                 .containsExactly("1");
     }
 
@@ -108,7 +108,7 @@ class RecommendServiceTest {
         assertThat(response.extractedFeatures()).isEmpty();
         assertThat(response.recommendations())
                 .hasSize(3)
-                .extracting(RecommendFoodResponse::foodId)
+                .extracting(FoodSummaryResponse::foodId)
                 .doesNotHaveDuplicates()
                 .isSubsetOf("1", "2", "3", "4");
     }
@@ -130,7 +130,7 @@ class RecommendServiceTest {
 
         assertThat(response.recommendations())
                 .hasSize(2)
-                .extracting(RecommendFoodResponse::foodId)
+                .extracting(FoodSummaryResponse::foodId)
                 .containsExactlyInAnyOrder("1", "2");
     }
 

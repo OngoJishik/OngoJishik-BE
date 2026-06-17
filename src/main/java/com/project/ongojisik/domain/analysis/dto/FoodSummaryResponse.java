@@ -1,20 +1,22 @@
 package com.project.ongojisik.domain.analysis.dto;
 
 import com.project.ongojisik.domain.analysis.entity.Food;
+import com.project.ongojisik.domain.analysis.util.FoodTextUtils;
+import java.util.List;
 
-public record RecommendFoodResponse(
+public record FoodSummaryResponse(
         String foodId,
         String foodName,
         String category,
-        String foodFeatures,
+        List<String> features,
         String foodPicture
 ) {
-    public static RecommendFoodResponse from(Food food) {
-        return new RecommendFoodResponse(
+    public static FoodSummaryResponse from(Food food) {
+        return new FoodSummaryResponse(
                 food.getFoodId(),
                 food.getFoodName(),
                 food.getCategory(),
-                food.getFoodFeatures(),
+                FoodTextUtils.splitComma(food.getFoodFeatures()),
                 food.getFoodPicture()
         );
     }

@@ -1,8 +1,8 @@
 package com.project.ongojisik.domain.bookmark.service;
 
+import com.project.ongojisik.domain.analysis.dto.FoodSummaryResponse;
 import com.project.ongojisik.domain.analysis.entity.Food;
 import com.project.ongojisik.domain.analysis.repository.FoodRepository;
-import com.project.ongojisik.domain.bookmark.dto.BookmarkResponse;
 import com.project.ongojisik.domain.bookmark.entity.Bookmark;
 import com.project.ongojisik.domain.bookmark.repository.BookmarkRepository;
 import com.project.ongojisik.domain.user.entity.User;
@@ -23,7 +23,7 @@ public class BookmarkService {
     private final UserRepository userRepository;
 
     @Transactional
-    public BookmarkResponse addBookmark(Long userId, String foodId) {
+    public FoodSummaryResponse addBookmark(Long userId, String foodId) {
         User user = findUser(userId);
         Food food = findFood(foodId);
 
@@ -31,7 +31,7 @@ public class BookmarkService {
             throw new APIException(ErrorCode.BOOKMARK_ALREADY_EXISTS);
         }
 
-        return BookmarkResponse.from(bookmarkRepository.save(Bookmark.create(user, food)));
+        return FoodSummaryResponse.from(bookmarkRepository.save(Bookmark.create(user, food)).getFood());
     }
 
     @Transactional
@@ -42,10 +42,10 @@ public class BookmarkService {
     }
 
     @Transactional(readOnly = true)
-    public List<BookmarkResponse> getBookmarks(Long userId) {
+    public List<FoodSummaryResponse> getBookmarks(Long userId) {
         findUser(userId);
         return bookmarkRepository.findByUserUserIdOrderByCreatedAtDesc(userId).stream()
-                .map(BookmarkResponse::from)
+                .map(bookmark -> FoodSummaryResponse.from(bookmark.getFood()))
                 .toList();
     }
 

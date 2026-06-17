@@ -1,6 +1,6 @@
 package com.project.ongojisik.domain.search.service;
 
-import com.project.ongojisik.domain.analysis.dto.RecommendFoodResponse;
+import com.project.ongojisik.domain.analysis.dto.FoodSummaryResponse;
 import com.project.ongojisik.domain.analysis.dto.RecommendResponse;
 import com.project.ongojisik.domain.analysis.entity.Food;
 import com.project.ongojisik.domain.analysis.repository.FoodRepository;
@@ -44,13 +44,13 @@ public class SearchService {
                 .findFirstByUserUserIdAndQuery(userId, query)
                 .orElse(null);
         if (existingSearchHistory != null) {
-            List<RecommendFoodResponse> recommendations = findRecommendationsInSavedOrder(existingSearchHistory);
+            List<FoodSummaryResponse> recommendations = findRecommendationsInSavedOrder(existingSearchHistory);
             return SearchResponse.from(existingSearchHistory, recommendations);
         }
 
         RecommendResponse recommendResponse = recommendService.recommend(query);
         List<String> recommendedFoodIds = recommendResponse.recommendations().stream()
-                .map(RecommendFoodResponse::foodId)
+                .map(FoodSummaryResponse::foodId)
                 .toList();
         SearchHistory searchHistory = SearchHistory.create(
                 user,
@@ -75,7 +75,7 @@ public class SearchService {
     @Transactional(readOnly = true)
     public SearchResponse getRecentSearchResult(Long userId, Long searchId) {
         SearchHistory searchHistory = findSearchHistory(userId, searchId);
-        List<RecommendFoodResponse> recommendations = findRecommendationsInSavedOrder(searchHistory);
+        List<FoodSummaryResponse> recommendations = findRecommendationsInSavedOrder(searchHistory);
         return SearchResponse.from(searchHistory, recommendations);
     }
 
@@ -91,7 +91,7 @@ public class SearchService {
         searchHistoryRepository.deleteByUserUserId(userId);
     }
 
-    private List<RecommendFoodResponse> findRecommendationsInSavedOrder(SearchHistory searchHistory) {
+    private List<FoodSummaryResponse> findRecommendationsInSavedOrder(SearchHistory searchHistory) {
         List<String> savedFoodIds = searchHistory.getRecommendedFoodIdList();
         Map<String, Food> foodById = foodRepository.findAllById(savedFoodIds).stream()
                 .collect(Collectors.toMap(Food::getFoodId, Function.identity()));
@@ -99,7 +99,7 @@ public class SearchService {
         return savedFoodIds.stream()
                 .filter(foodById::containsKey)
                 .map(foodById::get)
-                .map(RecommendFoodResponse::from)
+                .map(FoodSummaryResponse::from)
                 .toList();
     }
 

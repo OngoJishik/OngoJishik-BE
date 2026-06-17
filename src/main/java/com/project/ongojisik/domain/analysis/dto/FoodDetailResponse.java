@@ -1,8 +1,10 @@
 package com.project.ongojisik.domain.analysis.dto;
 
 import com.project.ongojisik.domain.analysis.entity.Food;
-import java.util.Arrays;
+import com.project.ongojisik.domain.analysis.util.FoodTextUtils;
 import java.util.List;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public record FoodDetailResponse(
         String foodId,
@@ -12,14 +14,14 @@ public record FoodDetailResponse(
         List<String> features,
         String imageUrl,
         boolean isBookmarked,
-        String ingredient,
-        List<String> recipeSteps,
+        List<String> ingredients,
+        List<RecipeStep> recipeSteps,
         History history,
         Literature literature,
         String dataSource
 ) {
 
-    private static final String DATA_SOURCE = "출처: 특허청 한국전통지식포탈 전통식품정보 API";
+    private static final String DATA_SOURCE = "Korean traditional food data API";
 
     public static FoodDetailResponse from(Food food, boolean isBookmarked) {
         return new FoodDetailResponse(
@@ -30,8 +32,8 @@ public record FoodDetailResponse(
                 createFeatures(food),
                 food.getFoodPicture(),
                 isBookmarked,
-                food.getIngredients(),
-                parseRecipeSteps(food.getRecipe()),
+                FoodTextUtils.splitComma(food.getIngredients()),
+                createRecipeSteps(food.getRecipe()),
                 new History(defaultString(food.getHistory()), ""),
                 new Literature(List.of(Source.from(food))),
                 DATA_SOURCE
@@ -39,37 +41,23 @@ public record FoodDetailResponse(
     }
 
     private static List<String> createFeatures(Food food) {
-        List<String> foodFeatures = splitComma(food.getFoodFeatures());
+        List<String> foodFeatures = FoodTextUtils.splitComma(food.getFoodFeatures());
         if (food.getCategory() == null || food.getCategory().isBlank()) {
             return foodFeatures;
         }
 
-        return java.util.stream.Stream.concat(
-                java.util.stream.Stream.of(food.getCategory()),
-                foodFeatures.stream()
-        ).toList();
-    }
-
-    private static List<String> splitComma(String value) {
-        if (value == null || value.isBlank()) {
-            return List.of();
-        }
-
-        return Arrays.stream(value.split(","))
-                .map(String::trim)
-                .filter(feature -> !feature.isBlank())
+        return Stream.concat(Stream.of(food.getCategory()), foodFeatures.stream())
                 .toList();
     }
 
-    private static List<String> parseRecipeSteps(String recipe) {
-        if (recipe == null || recipe.isBlank()) {
-            return List.of();
-        }
-
-        return Arrays.stream(recipe.split("\\R"))
-                .map(String::trim)
-                .filter(step -> !step.isBlank())
-                .map(step -> step.replaceFirst("^\\d+\\)\\s*", ""))
+    private static List<RecipeStep> createRecipeSteps(String recipe) {
+        List<String> descriptions = FoodTextUtils.splitRecipeDescriptions(recipe);
+        return IntStream.range(0, descriptions.size())
+                .mapToObj(index -> new RecipeStep(
+                        index + 1,
+                        (index + 1) + "단계",
+                        descriptions.get(index)
+                ))
                 .toList();
     }
 
@@ -80,6 +68,13 @@ public record FoodDetailResponse(
     public record History(
             String origin,
             String ceremony
+    ) {
+    }
+
+    public record RecipeStep(
+            int stepNumber,
+            String title,
+            String description
     ) {
     }
 

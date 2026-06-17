@@ -1,6 +1,6 @@
 package com.project.ongojisik.domain.bookmark.controller;
 
-import com.project.ongojisik.domain.bookmark.dto.BookmarkResponse;
+import com.project.ongojisik.domain.analysis.dto.FoodSummaryResponse;
 import com.project.ongojisik.domain.bookmark.service.BookmarkService;
 import com.project.ongojisik.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,7 +27,7 @@ public class BookmarkController {
 
     @Operation(summary = "음식 즐겨찾기 추가")
     @PostMapping("/{foodId}")
-    public ApiResponse<BookmarkResponse> addBookmark(
+    public ApiResponse<FoodSummaryResponse> addBookmark(
             @AuthenticationPrincipal String userId,
             @PathVariable String foodId
     ) {
@@ -46,7 +46,7 @@ public class BookmarkController {
 
     @Operation(summary = "내 즐겨찾기 목록 조회")
     @GetMapping
-    public ApiResponse<List<BookmarkResponse>> getBookmarks(
+    public ApiResponse<List<FoodSummaryResponse>> getBookmarks(
             @AuthenticationPrincipal String userId
     ) {
         return ApiResponse.success(bookmarkService.getBookmarks(Long.valueOf(userId)));
