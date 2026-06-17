@@ -23,7 +23,7 @@ public class Food {
     @Column(name = "food_name")
     private String foodName;
 
-    @Column(name = "food_features")
+    @Column(name = "food_feature")
     private String foodFeatures;
 
     @Column(name = "ingredients", columnDefinition = "TEXT")
@@ -35,10 +35,7 @@ public class Food {
     @Column(name = "history", columnDefinition = "TEXT")
     private String history;
 
-    @Column(name = "doc_code")
-    private String docCode;
-
-    @Column(name = "doc_name")
+    @Column(name = "doc_nm")
     private String docName;
 
     @Column(name = "author")
@@ -47,7 +44,9 @@ public class Food {
     @Column(name = "published_year")
     private String publishedYear;
 
-    @Column(name = "document_content", columnDefinition = "TEXT")
-    private String documentContent;
+    @Column(name = "trans_txt", columnDefinition = "TEXT")
+    private String transTxt;
 
+    @Column(name = "org_food_url", columnDefinition = "TEXT")
+    private String orgFoodUrl;
 }
