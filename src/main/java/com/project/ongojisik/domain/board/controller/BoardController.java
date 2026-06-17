@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -113,6 +114,14 @@ public class BoardController {
         return ApiResponse.success(
                 boardService.getMyBoardList(Long.valueOf(userId), pageable)
         );
+    }
+
+    @Operation(summary = "인기 게시글 조회", description = "좋아요 수가 많은 게시글을 상위 5개까지 조회합니다.")
+    @GetMapping("/popular")
+    public ApiResponse<List<BoardSummaryResponse>> getPopularBoards(
+            @AuthenticationPrincipal String userId
+    ) {
+        return ApiResponse.success(boardService.getPopularBoards(Long.valueOf(userId)));
     }
 
     @Operation(summary = "게시글 상세 조회", description = "게시글 ID로 단건 조회합니다.")

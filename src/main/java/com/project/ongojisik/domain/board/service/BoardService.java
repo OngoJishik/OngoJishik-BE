@@ -13,6 +13,7 @@ import com.project.ongojisik.domain.user.repository.UserRepository;
 import com.project.ongojisik.global.exception.APIException;
 import com.project.ongojisik.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,8 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final BookmarkRepository bookmarkRepository;
+
+    private static final int POPULAR_BOARD_LIMIT = 5;
 
     @Transactional
     public BoardResponse createBoard(Long userId, BoardCreateRequest request) {
@@ -69,6 +72,11 @@ public class BoardService {
     public Page<BoardSummaryResponse> getMyBoardList(Long userId, Pageable pageable) {
         findCurrentUser(userId);
         return boardRepository.findMySummaryWithCounts(userId, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public List<BoardSummaryResponse> getPopularBoards(Long userId) {
+        return boardRepository.findPopularSummaries(userId, PageRequest.of(0, POPULAR_BOARD_LIMIT));
     }
 
     @Transactional(readOnly = true)

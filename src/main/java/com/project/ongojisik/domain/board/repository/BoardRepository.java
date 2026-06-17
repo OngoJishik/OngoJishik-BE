@@ -3,6 +3,7 @@ package com.project.ongojisik.domain.board.repository;
 import com.project.ongojisik.domain.board.entity.Board;
 import com.project.ongojisik.domain.board.dto.BoardResponse;
 import com.project.ongojisik.domain.board.dto.BoardSummaryResponse;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -170,6 +171,34 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             countQuery = "select count(b) from Board b where b.user.userId = :userId"
     )
     Page<BoardSummaryResponse> findMySummaryWithCounts(
+            @Param("userId") Long userId,
+            Pageable pageable
+    );
+
+    @Query("""
+            select new com.project.ongojisik.domain.board.dto.BoardSummaryResponse(
+                b.boardId,
+                b.title,
+                b.imageUrls,
+                b.category,
+                (select count(bl) from BoardLike bl where bl.board.boardId = b.boardId),
+                (select count(c) from Comment c where c.board.boardId = b.boardId),
+                exists (
+                    select 1
+                    from BoardLike liked
+                    where liked.board.boardId = b.boardId
+                      and liked.user.userId = :userId
+                ),
+                b.user.userId,
+                b.user.nickname,
+                b.createdAt
+            )
+            from Board b
+            order by (select count(bl) from BoardLike bl where bl.board.boardId = b.boardId) desc,
+                     b.createdAt desc,
+                     b.boardId desc
+            """)
+    List<BoardSummaryResponse> findPopularSummaries(
             @Param("userId") Long userId,
             Pageable pageable
     );
