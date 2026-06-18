@@ -65,9 +65,17 @@ public class Board {
         this.user = user;
         this.title = title;
         this.content = content;
-        this.imageUrls = imageUrls == null ? new ArrayList<>() : new ArrayList<>(imageUrls);
+        if (imageUrls == null) {
+            this.imageUrls = new ArrayList<>();
+        } else {
+            this.imageUrls = new ArrayList<>(imageUrls);
+        }
         this.category = category;
-        this.hashtag = hashtag == null ? new ArrayList<>() : new ArrayList<>(hashtag);
+        if (hashtag == null) {
+            this.hashtag = new ArrayList<>();
+        } else {
+            this.hashtag = new ArrayList<>(hashtag);
+        }
         this.recipeId = recipeId;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -81,9 +89,17 @@ public class Board {
     public void update(String title, String content, List<String> imageUrls, BoardCategory category, List<String> hashtag, String recipeId) {
         this.title = title;
         this.content = content;
-        this.imageUrls = imageUrls == null ? new ArrayList<>() : new ArrayList<>(imageUrls);
+        if (imageUrls == null) {
+            this.imageUrls = new ArrayList<>();
+        } else {
+            this.imageUrls = new ArrayList<>(imageUrls);
+        }
         this.category = category;
-        this.hashtag = hashtag == null ? new ArrayList<>() : new ArrayList<>(hashtag);
+        if (hashtag == null) {
+            this.hashtag = new ArrayList<>();
+        } else {
+            this.hashtag = new ArrayList<>(hashtag);
+        }
         this.recipeId = recipeId;
         this.updatedAt = LocalDateTime.now();
     }
