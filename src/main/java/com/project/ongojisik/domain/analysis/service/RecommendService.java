@@ -27,6 +27,7 @@ public class RecommendService {
     private final FoodRepository foodRepository;
     private final FeatureExtractor featureExtractor;
     private final BookmarkRepository bookmarkRepository;
+    private final FoodImageGenerationService foodImageGenerationService;
 
     public RecommendResponse recommend(String query) {
         if (query == null || query.isBlank()) {
@@ -36,15 +37,20 @@ public class RecommendService {
         FeatureExtractionResult extractionResult = featureExtractor.extract(query);
         List<Food> foods = foodRepository.findAll();
 
-        List<FoodSummaryResponse> recommendations;
+        List<Food> recommendedFoods;
         if (extractionResult.searchTerms().isEmpty()) {
-            recommendations = selectFallbackRecommendations(foods);
+            recommendedFoods = selectFallbackRecommendations(foods);
         } else {
-            recommendations = selectMatchedRecommendations(extractionResult, foods);
-            if (recommendations.isEmpty()) {
-                recommendations = selectFallbackRecommendations(foods);
+            recommendedFoods = selectMatchedRecommendations(extractionResult, foods);
+            if (recommendedFoods.isEmpty()) {
+                recommendedFoods = selectFallbackRecommendations(foods);
             }
         }
+
+        List<FoodSummaryResponse> recommendations = recommendedFoods.stream()
+                .peek(foodImageGenerationService::generateAndStoreImageIfNeeded)
+                .map(FoodSummaryResponse::from)
+                .toList();
 
         return new RecommendResponse(query, extractionResult.searchTerms(), recommendations);
     }
@@ -58,7 +64,7 @@ public class RecommendService {
         return FoodDetailResponse.from(food, isBookmarked);
     }
 
-    private List<FoodSummaryResponse> selectMatchedRecommendations(
+    private List<Food> selectMatchedRecommendations(
             FeatureExtractionResult extractionResult,
             List<Food> foods
     ) {
@@ -76,16 +82,15 @@ public class RecommendService {
                         .thenComparing(FoodScore::categoryMatched, Comparator.reverseOrder())
                         .thenComparing(result -> result.food().getFoodId()))
                 .limit(3)
-                .map(result -> FoodSummaryResponse.from(result.food()))
+                .map(FoodScore::food)
                 .toList();
     }
 
-    private List<FoodSummaryResponse> selectFallbackRecommendations(List<Food> foods) {
+    private List<Food> selectFallbackRecommendations(List<Food> foods) {
         List<Food> shuffledFoods = new ArrayList<>(foods);
         Collections.shuffle(shuffledFoods);
         return shuffledFoods.stream()
                 .limit(3)
-                .map(FoodSummaryResponse::from)
                 .toList();
     }
 

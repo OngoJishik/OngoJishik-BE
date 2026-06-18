@@ -2,6 +2,7 @@ package com.project.ongojisik.domain.analysis.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -22,8 +23,13 @@ class RecommendServiceTest {
     private final FoodRepository foodRepository = mock(FoodRepository.class);
     private final FeatureExtractor featureExtractor = mock(FeatureExtractor.class);
     private final BookmarkRepository bookmarkRepository = mock(BookmarkRepository.class);
+    private final FoodImageGenerationService foodImageGenerationService = mock(FoodImageGenerationService.class);
     private final RecommendService recommendService =
-            new RecommendService(foodRepository, featureExtractor, bookmarkRepository);
+            new RecommendService(foodRepository, featureExtractor, bookmarkRepository, foodImageGenerationService);
+
+    RecommendServiceTest() {
+        when(foodImageGenerationService.generateAndStoreImageIfNeeded(any(Food.class))).thenReturn(null);
+    }
 
     @Test
     void ranksExactCategoryAndFeatureMatches() {
