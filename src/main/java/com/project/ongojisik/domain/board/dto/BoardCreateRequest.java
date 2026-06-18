@@ -1,8 +1,6 @@
 package com.project.ongojisik.domain.board.dto;
 
-import com.project.ongojisik.domain.board.entity.BoardCategory;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 public record BoardCreateRequest(

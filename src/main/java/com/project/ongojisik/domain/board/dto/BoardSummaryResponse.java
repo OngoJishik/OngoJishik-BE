@@ -1,7 +1,6 @@
 package com.project.ongojisik.domain.board.dto;
 
 import com.project.ongojisik.domain.board.entity.Board;
-import com.project.ongojisik.domain.board.entity.BoardCategory;
 import java.time.LocalDateTime;
 import java.util.List;
 

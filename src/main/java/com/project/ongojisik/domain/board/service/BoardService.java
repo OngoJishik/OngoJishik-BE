@@ -5,7 +5,6 @@ import com.project.ongojisik.domain.board.dto.BoardResponse;
 import com.project.ongojisik.domain.board.dto.BoardSummaryResponse;
 import com.project.ongojisik.domain.board.dto.BoardUpdateRequest;
 import com.project.ongojisik.domain.board.entity.Board;
-import com.project.ongojisik.domain.board.entity.BoardCategory;
 import com.project.ongojisik.domain.board.repository.BoardRepository;
 import com.project.ongojisik.domain.bookmark.entity.Bookmark;
 import com.project.ongojisik.domain.bookmark.repository.BookmarkRepository;
@@ -50,25 +49,25 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public Page<BoardSummaryResponse> getBoardList(Long userId, BoardCategory category, Pageable pageable) {
-        if (category == null) {
+    public Page<BoardSummaryResponse> getBoardList(Long userId, String category, Pageable pageable) {
+        if (category == null || category.isBlank()) {
             return boardRepository.findAllSummaryWithCounts(userId, pageable);
         }
 
-        return boardRepository.findSummaryByCategoryWithCounts(userId, category, pageable);
+        return boardRepository.findSummaryByCategoryWithCounts(userId, category.trim(), pageable);
     }
 
     @Transactional(readOnly = true)
-    public Page<BoardSummaryResponse> searchBoardsByTitle(Long userId, String title, BoardCategory category, Pageable pageable) {
+    public Page<BoardSummaryResponse> searchBoardsByTitle(Long userId, String title, String category, Pageable pageable) {
         if (title == null || title.isBlank()) {
             throw new APIException(ErrorCode.INVALID_INPUT_VALUE);
         }
 
-        if (category == null) {
+        if (category == null || category.isBlank()) {
             return boardRepository.findSummaryByTitleWithCounts(userId, title, pageable);
         }
 
-        return boardRepository.findSummaryByTitleAndCategoryWithCounts(userId, title, category, pageable);
+        return boardRepository.findSummaryByTitleAndCategoryWithCounts(userId, title, category.trim(), pageable);
     }
 
     @Transactional(readOnly = true)
@@ -136,6 +135,31 @@ public class BoardService {
         }
 
         return new ArrayList<>(hashtag);
+    }
+
+    private String validateBookmarkedRecipeId(Long userId, String recipeId) {
+        if (recipeId == null || recipeId.isBlank()) {
+            return null;
+        }
+
+        String foodId = recipeId.trim();
+        Bookmark bookmark = bookmarkRepository.findByUserUserIdAndFoodFoodId(userId, foodId)
+                .orElseThrow(() -> new APIException(ErrorCode.BOOKMARK_NOT_FOUND));
+
+        String recipe = bookmark.getFood().getRecipe();
+        if (recipe == null || recipe.isBlank()) {
+            throw new APIException(ErrorCode.INVALID_INPUT_VALUE);
+        }
+
+        return foodId;
+    }
+
+    private List<String> normalizeCategory(List<String> category) {
+        if (category == null) {
+            return List.of();
+        }
+
+        return List.copyOf(category);
     }
 
     private String validateBookmarkedRecipeId(Long userId, String recipeId) {
