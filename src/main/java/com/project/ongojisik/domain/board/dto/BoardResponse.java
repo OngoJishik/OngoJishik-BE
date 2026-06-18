@@ -1,6 +1,7 @@
 package com.project.ongojisik.domain.board.dto;
 
 import com.project.ongojisik.domain.board.entity.Board;
+import com.project.ongojisik.domain.board.entity.BoardCategory;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -9,7 +10,8 @@ public record BoardResponse(
         String title,
         String content,
         List<String> imageUrls,
-        List<String> category,
+        BoardCategory category,
+        List<String> hashtag,
         String recipeId,
         Long likeCount,
         Long commentCount,
@@ -27,6 +29,7 @@ public record BoardResponse(
                 board.getContent(),
                 board.getImageUrls(),
                 board.getCategory(),
+                board.getHashtag(),
                 board.getRecipeId(),
                 0L,
                 0L,

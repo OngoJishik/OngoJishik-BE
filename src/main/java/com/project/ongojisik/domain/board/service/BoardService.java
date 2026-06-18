@@ -5,6 +5,7 @@ import com.project.ongojisik.domain.board.dto.BoardResponse;
 import com.project.ongojisik.domain.board.dto.BoardSummaryResponse;
 import com.project.ongojisik.domain.board.dto.BoardUpdateRequest;
 import com.project.ongojisik.domain.board.entity.Board;
+import com.project.ongojisik.domain.board.entity.BoardCategory;
 import com.project.ongojisik.domain.board.repository.BoardRepository;
 import com.project.ongojisik.domain.bookmark.entity.Bookmark;
 import com.project.ongojisik.domain.bookmark.repository.BookmarkRepository;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -39,7 +41,8 @@ public class BoardService {
                 request.title(),
                 request.content(),
                 normalizeImageUrls(request.imageUrls()),
-                normalizeCategory(request.category()),
+                request.category(),
+                normalizeHashtag(request.hashtag()),
                 recipeId
         );
         Board savedBoard = boardRepository.save(board);
@@ -47,25 +50,25 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public Page<BoardSummaryResponse> getBoardList(Long userId, String category, Pageable pageable) {
-        if (category == null || category.isBlank()) {
+    public Page<BoardSummaryResponse> getBoardList(Long userId, BoardCategory category, Pageable pageable) {
+        if (category == null) {
             return boardRepository.findAllSummaryWithCounts(userId, pageable);
         }
 
-        return boardRepository.findSummaryByCategoryWithCounts(userId, category.trim(), pageable);
+        return boardRepository.findSummaryByCategoryWithCounts(userId, category, pageable);
     }
 
     @Transactional(readOnly = true)
-    public Page<BoardSummaryResponse> searchBoardsByTitle(Long userId, String title, String category, Pageable pageable) {
+    public Page<BoardSummaryResponse> searchBoardsByTitle(Long userId, String title, BoardCategory category, Pageable pageable) {
         if (title == null || title.isBlank()) {
             throw new APIException(ErrorCode.INVALID_INPUT_VALUE);
         }
 
-        if (category == null || category.isBlank()) {
+        if (category == null) {
             return boardRepository.findSummaryByTitleWithCounts(userId, title, pageable);
         }
 
-        return boardRepository.findSummaryByTitleAndCategoryWithCounts(userId, title, category.trim(), pageable);
+        return boardRepository.findSummaryByTitleAndCategoryWithCounts(userId, title, category, pageable);
     }
 
     @Transactional(readOnly = true)
@@ -94,7 +97,8 @@ public class BoardService {
                 request.title(),
                 request.content(),
                 normalizeImageUrls(request.imageUrls()),
-                normalizeCategory(request.category()),
+                request.category(),
+                normalizeHashtag(request.hashtag()),
                 recipeId
         );
         return boardRepository.findResponseByIdWithCounts(userId, boardId)
@@ -119,15 +123,19 @@ public class BoardService {
     }
 
     private List<String> normalizeImageUrls(List<String> imageUrls) {
-        return imageUrls == null ? List.of() : List.copyOf(imageUrls);
-    }
-
-    private List<String> normalizeCategory(List<String> category) {
-        if (category == null) {
-            return List.of();
+        if (imageUrls == null) {
+            return new ArrayList<>();
         }
 
-        return List.copyOf(category);
+        return new ArrayList<>(imageUrls);
+    }
+
+    private List<String> normalizeHashtag(List<String> hashtag) {
+        if (hashtag == null) {
+            return new ArrayList<>();
+        }
+
+        return new ArrayList<>(hashtag);
     }
 
     private String validateBookmarkedRecipeId(Long userId, String recipeId) {
