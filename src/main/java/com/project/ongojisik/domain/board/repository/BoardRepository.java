@@ -3,6 +3,7 @@ package com.project.ongojisik.domain.board.repository;
 import com.project.ongojisik.domain.board.entity.Board;
 import com.project.ongojisik.domain.board.dto.BoardResponse;
 import com.project.ongojisik.domain.board.dto.BoardSummaryResponse;
+import com.project.ongojisik.domain.board.entity.BoardCategory;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                         b.title,
                         b.imageUrls,
                         b.category,
+                        b.hashtag,
                         (select count(bl) from BoardLike bl where bl.board.boardId = b.boardId),
                         (select count(c) from Comment c where c.board.boardId = b.boardId),
                         exists (
@@ -48,6 +50,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                         b.title,
                         b.imageUrls,
                         b.category,
+                        b.hashtag,
                         (select count(bl) from BoardLike bl where bl.board.boardId = b.boardId),
                         (select count(c) from Comment c where c.board.boardId = b.boardId),
                         exists (
@@ -61,17 +64,17 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                         b.createdAt
                     )
                     from Board b
-                    where lower(cast(b.category as string)) like lower(concat('%', :category, '%'))
+                    where b.category = :category
                     """,
             countQuery = """
                     select count(b)
                     from Board b
-                    where lower(cast(b.category as string)) like lower(concat('%', :category, '%'))
+                    where b.category = :category
                     """
     )
     Page<BoardSummaryResponse> findSummaryByCategoryWithCounts(
             @Param("userId") Long userId,
-            @Param("category") String category,
+            @Param("category") BoardCategory category,
             Pageable pageable
     );
 
@@ -82,6 +85,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                         b.title,
                         b.imageUrls,
                         b.category,
+                        b.hashtag,
                         (select count(bl) from BoardLike bl where bl.board.boardId = b.boardId),
                         (select count(c) from Comment c where c.board.boardId = b.boardId),
                         exists (
@@ -116,6 +120,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                         b.title,
                         b.imageUrls,
                         b.category,
+                        b.hashtag,
                         (select count(bl) from BoardLike bl where bl.board.boardId = b.boardId),
                         (select count(c) from Comment c where c.board.boardId = b.boardId),
                         exists (
@@ -130,19 +135,19 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                     )
                     from Board b
                     where lower(b.title) like lower(concat('%', :title, '%'))
-                      and lower(cast(b.category as string)) like lower(concat('%', :category, '%'))
+                      and b.category = :category
                     """,
             countQuery = """
                     select count(b)
                     from Board b
                     where lower(b.title) like lower(concat('%', :title, '%'))
-                      and lower(cast(b.category as string)) like lower(concat('%', :category, '%'))
+                      and b.category = :category
                     """
     )
     Page<BoardSummaryResponse> findSummaryByTitleAndCategoryWithCounts(
             @Param("userId") Long userId,
             @Param("title") String title,
-            @Param("category") String category,
+            @Param("category") BoardCategory category,
             Pageable pageable
     );
 
@@ -153,6 +158,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                         b.title,
                         b.imageUrls,
                         b.category,
+                        b.hashtag,
                         (select count(bl) from BoardLike bl where bl.board.boardId = b.boardId),
                         (select count(c) from Comment c where c.board.boardId = b.boardId),
                         exists (
@@ -181,6 +187,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                 b.title,
                 b.imageUrls,
                 b.category,
+                b.hashtag,
                 (select count(bl) from BoardLike bl where bl.board.boardId = b.boardId),
                 (select count(c) from Comment c where c.board.boardId = b.boardId),
                 exists (
@@ -210,6 +217,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                 b.content,
                 b.imageUrls,
                 b.category,
+                b.hashtag,
                 b.recipeId,
                 (select count(bl) from BoardLike bl where bl.board.boardId = b.boardId),
                 (select count(c) from Comment c where c.board.boardId = b.boardId),

@@ -5,6 +5,8 @@ import com.project.ongojisik.global.converter.StringListJsonConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -38,9 +40,13 @@ public class Board {
     @Column(name = "image_urls", nullable = false, columnDefinition = "TEXT")
     private List<String> imageUrls;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category", nullable = false)
+    private BoardCategory category;
+
     @Convert(converter = StringListJsonConverter.class)
-    @Column(name = "category", nullable = false, columnDefinition = "TEXT")
-    private List<String> category;
+    @Column(name = "hashtag", nullable = false, columnDefinition = "TEXT")
+    private List<String> hashtag;
 
     @Column(name = "recipe_id")
     private String recipeId;
@@ -55,27 +61,29 @@ public class Board {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    private Board(User user, String title, String content, List<String> imageUrls, List<String> category, String recipeId, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    private Board(User user, String title, String content, List<String> imageUrls, BoardCategory category, List<String> hashtag, String recipeId, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.user = user;
         this.title = title;
         this.content = content;
         this.imageUrls = imageUrls == null ? new ArrayList<>() : new ArrayList<>(imageUrls);
-        this.category = category == null ? new ArrayList<>() : new ArrayList<>(category);
+        this.category = category;
+        this.hashtag = hashtag == null ? new ArrayList<>() : new ArrayList<>(hashtag);
         this.recipeId = recipeId;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
 
-    public static Board create(User user, String title, String content, List<String> imageUrls, List<String> category, String recipeId) {
+    public static Board create(User user, String title, String content, List<String> imageUrls, BoardCategory category, List<String> hashtag, String recipeId) {
         LocalDateTime now = LocalDateTime.now();
-        return new Board(user, title, content, imageUrls, category, recipeId, now, now);
+        return new Board(user, title, content, imageUrls, category, hashtag, recipeId, now, now);
     }
 
-    public void update(String title, String content, List<String> imageUrls, List<String> category, String recipeId) {
+    public void update(String title, String content, List<String> imageUrls, BoardCategory category, List<String> hashtag, String recipeId) {
         this.title = title;
         this.content = content;
         this.imageUrls = imageUrls == null ? new ArrayList<>() : new ArrayList<>(imageUrls);
-        this.category = category == null ? new ArrayList<>() : new ArrayList<>(category);
+        this.category = category;
+        this.hashtag = hashtag == null ? new ArrayList<>() : new ArrayList<>(hashtag);
         this.recipeId = recipeId;
         this.updatedAt = LocalDateTime.now();
     }
