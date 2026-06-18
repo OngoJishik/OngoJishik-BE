@@ -49,4 +49,8 @@ public class Food {
 
     @Column(name = "org_food_url", columnDefinition = "TEXT")
     private String orgFoodUrl;
+
+    public void updateFoodPicture(String foodPicture) {
+        this.foodPicture = foodPicture;
+    }
 }
