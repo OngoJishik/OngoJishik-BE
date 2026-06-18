@@ -9,7 +9,9 @@ public record BoardUpdateRequest(
         @NotBlank(message = "게시글 내용은 필수입니다.")
         String content,
         List<String> imageUrls,
-        List<String> category,
+        @NotNull(message = "게시글 카테고리는 필수입니다.")
+        BoardCategory category,
+        List<String> hashtag,
         String recipeId
 ) {
 }
