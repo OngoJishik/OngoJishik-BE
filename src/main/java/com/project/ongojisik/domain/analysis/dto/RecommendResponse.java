@@ -5,6 +5,6 @@ import java.util.List;
 public record RecommendResponse(
         String originalQuery,
         List<String> extractedFeatures,
-        List<RecommendFoodResponse> recommendations
+        List<FoodSummaryResponse> recommendations
 ) {
 }

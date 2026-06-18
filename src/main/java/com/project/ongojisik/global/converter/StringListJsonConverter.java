@@ -19,7 +19,7 @@ public class StringListJsonConverter implements AttributeConverter<List<String>,
         try {
             return OBJECT_MAPPER.writeValueAsString(attribute == null ? List.of() : attribute);
         } catch (JsonProcessingException exception) {
-            throw new IllegalStateException("이미지 목록을 JSON으로 변환하는 데 실패했습니다.", exception);
+            throw new IllegalStateException("문자열 목록을 JSON으로 변환하는 데 실패했습니다.", exception);
         }
     }
 
@@ -32,7 +32,7 @@ public class StringListJsonConverter implements AttributeConverter<List<String>,
         try {
             return OBJECT_MAPPER.readValue(dbData, TYPE_REFERENCE);
         } catch (JsonProcessingException exception) {
-            throw new IllegalStateException("이미지 목록 JSON을 복원하는 데 실패했습니다.", exception);
+            return List.of(dbData);
         }
     }
 }

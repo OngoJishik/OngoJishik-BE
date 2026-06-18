@@ -1,6 +1,6 @@
 package com.project.ongojisik.domain.search.dto;
 
-import com.project.ongojisik.domain.analysis.dto.RecommendFoodResponse;
+import com.project.ongojisik.domain.analysis.dto.FoodSummaryResponse;
 import com.project.ongojisik.domain.analysis.dto.RecommendResponse;
 import com.project.ongojisik.domain.search.entity.SearchHistory;
 import java.time.LocalDateTime;
@@ -10,7 +10,7 @@ public record SearchResponse(
         Long searchId,
         String originalQuery,
         List<String> extractedFeatures,
-        List<RecommendFoodResponse> recommendations,
+        List<FoodSummaryResponse> recommendations,
         LocalDateTime createdAt
 ) {
 
@@ -24,7 +24,7 @@ public record SearchResponse(
         );
     }
 
-    public static SearchResponse from(SearchHistory searchHistory, List<RecommendFoodResponse> recommendations) {
+    public static SearchResponse from(SearchHistory searchHistory, List<FoodSummaryResponse> recommendations) {
         return new SearchResponse(
                 searchHistory.getSearchId(),
                 searchHistory.getQuery(),

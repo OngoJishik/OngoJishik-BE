@@ -2,8 +2,9 @@ package com.project.ongojisik.domain.analysis.controller;
 
 import com.project.ongojisik.domain.analysis.dto.FoodDetailResponse;
 import com.project.ongojisik.domain.analysis.dto.RecommendRequest;
-import com.project.ongojisik.domain.analysis.dto.RecommendResponse;
 import com.project.ongojisik.domain.analysis.service.RecommendService;
+import com.project.ongojisik.domain.search.dto.SearchResponse;
+import com.project.ongojisik.domain.search.service.SearchService;
 import com.project.ongojisik.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -24,16 +25,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/analysis")
 public class RecommendController {
     private final RecommendService recommendService;
+    private final SearchService searchService;
 
     @Operation(
             summary = "음식 추천 결과 조회",
             description = "사용자가 입력한 문장을 기반으로 전통 음식 3개를 추천합니다."
     )
     @PostMapping("/recommend")
-    public ApiResponse<RecommendResponse> recommend(
+    public ApiResponse<SearchResponse> recommend(
+            @AuthenticationPrincipal String userId,
             @RequestBody RecommendRequest request
     ) {
-        return ApiResponse.success(recommendService.recommend(request.query()));
+        return ApiResponse.success(searchService.search(Long.valueOf(userId), request.query()));
     }
 
     @Operation(
