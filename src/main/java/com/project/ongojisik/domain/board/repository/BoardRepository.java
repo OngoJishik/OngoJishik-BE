@@ -64,17 +64,17 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                         b.createdAt
                     )
                     from Board b
-                    where lower(cast(b.category as string)) like lower(concat('%', :category, '%'))
+                    where b.category = :category
                     """,
             countQuery = """
                     select count(b)
                     from Board b
-                    where b.category = :categoryain
+                    where b.category = :category
                     """
     )
     Page<BoardSummaryResponse> findSummaryByCategoryWithCounts(
             @Param("userId") Long userId,
-            @Param("category") String category,
+            @Param("category") BoardCategory category,
             Pageable pageable
     );
 
@@ -135,19 +135,19 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                     )
                     from Board b
                     where lower(b.title) like lower(concat('%', :title, '%'))
-                      and lower(cast(b.category as string)) like lower(concat('%', :category, '%'))
+                      and b.category = :category
                     """,
             countQuery = """
                     select count(b)
                     from Board b
                     where lower(b.title) like lower(concat('%', :title, '%'))
-                      and lower(cast(b.category as string)) like lower(concat('%', :category, '%'))
+                      and b.category = :category
                     """
     )
     Page<BoardSummaryResponse> findSummaryByTitleAndCategoryWithCounts(
             @Param("userId") Long userId,
             @Param("title") String title,
-            @Param("category") String category,
+            @Param("category") BoardCategory category,
             Pageable pageable
     );
 

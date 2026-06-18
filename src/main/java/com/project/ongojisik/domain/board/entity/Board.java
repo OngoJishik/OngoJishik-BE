@@ -5,6 +5,8 @@ import com.project.ongojisik.global.converter.StringListJsonConverter;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -38,12 +40,9 @@ public class Board {
     @Column(name = "image_urls", nullable = false, columnDefinition = "TEXT")
     private List<String> imageUrls;
 
-    @Convert(converter = StringListJsonConverter.class)
-    @Column(name = "category", nullable = false, columnDefinition = "TEXT")
-    private List<String> category;
-
-    @Column(name = "recipe_id")
-    private String recipeId;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "category", nullable = false)
+    private BoardCategory category;
 
     @Convert(converter = StringListJsonConverter.class)
     @Column(name = "hashtag", nullable = false, columnDefinition = "TEXT")
