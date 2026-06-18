@@ -75,4 +75,35 @@ public class S3ImageStorageService implements ImageStorageService {
             throw new APIException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Override
+    public String uploadImage(byte[] imageBytes, String contentType, String directory) {
+        if (imageBytes == null || imageBytes.length == 0) {
+            throw new APIException(ErrorCode.INVALID_INPUT_VALUE);
+        }
+
+        if (!StringUtils.hasText(bucketName)) {
+            log.error("S3 bucket name is not configured");
+            throw new APIException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+
+        String extension = contentType != null && contentType.contains("png") ? ".png" : ".jpg";
+        String fileName = UUID.randomUUID() + extension;
+        String safeDirectory = StringUtils.hasText(directory) ? directory : "generated-images";
+        String key = safeDirectory + "/" + LocalDate.now().format(DATE_FORMATTER) + "/" + fileName;
+
+        log.info("Uploading generated image to S3: bucket={}, key={}", bucketName, key);
+        PutObjectRequest request = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .contentType(contentType)
+                .build();
+
+        s3Client.putObject(request, RequestBody.fromBytes(imageBytes));
+        URL url = s3Client.utilities().getUrl(GetUrlRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .build());
+        return url.toExternalForm();
+    }
 }

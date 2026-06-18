@@ -6,4 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 public interface ImageStorageService {
 
     List<String> uploadImages(List<MultipartFile> files);
+
+    String uploadImage(byte[] imageBytes, String contentType, String directory);
 }
