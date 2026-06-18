@@ -69,8 +69,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             countQuery = """
                     select count(b)
                     from Board b
-
-                    where b.category = :categoryain
+                    where b.category = :category
                     """
     )
     Page<BoardSummaryResponse> findSummaryByCategoryWithCounts(
