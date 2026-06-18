@@ -4,6 +4,7 @@ import com.project.ongojisik.domain.board.dto.BoardCreateRequest;
 import com.project.ongojisik.domain.board.dto.BoardResponse;
 import com.project.ongojisik.domain.board.dto.BoardSummaryResponse;
 import com.project.ongojisik.domain.board.dto.BoardUpdateRequest;
+import com.project.ongojisik.domain.board.entity.BoardCategory;
 import com.project.ongojisik.domain.board.service.BoardService;
 import com.project.ongojisik.global.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -56,7 +57,7 @@ public class BoardController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "DESC") Direction direction,
-            @RequestParam(required = false) String category
+            @RequestParam(required = false) BoardCategory category
     ) {
         Pageable pageable = PageRequest.of(
                 page,
@@ -78,7 +79,7 @@ public class BoardController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "DESC") Direction direction,
-            @RequestParam(required = false) String category
+            @RequestParam(required = false) BoardCategory category
     ) {
         Pageable pageable = PageRequest.of(
                 page,
