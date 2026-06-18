@@ -3,6 +3,7 @@ package com.project.ongojisik.domain.bookmark.service;
 import com.project.ongojisik.domain.analysis.dto.FoodSummaryResponse;
 import com.project.ongojisik.domain.analysis.entity.Food;
 import com.project.ongojisik.domain.analysis.repository.FoodRepository;
+import com.project.ongojisik.domain.bookmark.dto.BookmarkListResponse;
 import com.project.ongojisik.domain.bookmark.dto.BookmarkedRecipeResponse;
 import com.project.ongojisik.domain.bookmark.entity.Bookmark;
 import com.project.ongojisik.domain.bookmark.repository.BookmarkRepository;
@@ -43,11 +44,12 @@ public class BookmarkService {
     }
 
     @Transactional(readOnly = true)
-    public List<FoodSummaryResponse> getBookmarks(Long userId) {
+    public BookmarkListResponse getBookmarks(Long userId) {
         findUser(userId);
-        return bookmarkRepository.findByUserUserIdOrderByCreatedAtDesc(userId).stream()
+        List<FoodSummaryResponse> bookmarks = bookmarkRepository.findByUserUserIdOrderByCreatedAtDesc(userId).stream()
                 .map(bookmark -> FoodSummaryResponse.from(bookmark.getFood()))
                 .toList();
+        return BookmarkListResponse.from(bookmarks);
     }
 
     @Transactional(readOnly = true)

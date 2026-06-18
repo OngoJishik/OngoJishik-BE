@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import com.project.ongojisik.domain.analysis.entity.Food;
 import com.project.ongojisik.domain.analysis.dto.FoodSummaryResponse;
 import com.project.ongojisik.domain.analysis.repository.FoodRepository;
+import com.project.ongojisik.domain.bookmark.dto.BookmarkListResponse;
 import com.project.ongojisik.domain.bookmark.entity.Bookmark;
 import com.project.ongojisik.domain.bookmark.repository.BookmarkRepository;
 import com.project.ongojisik.domain.user.entity.User;
@@ -98,12 +99,13 @@ class BookmarkServiceTest {
         when(bookmarkRepository.findByUserUserIdOrderByCreatedAtDesc(USER_ID))
                 .thenReturn(List.of(bookmark));
 
-        List<FoodSummaryResponse> response = bookmarkService.getBookmarks(USER_ID);
+        BookmarkListResponse response = bookmarkService.getBookmarks(USER_ID);
 
-        assertThat(response).hasSize(1);
-        assertThat(response.get(0).foodId()).isEqualTo(FOOD_ID);
-        assertThat(response.get(0).features()).containsExactly("feature-a", "feature-b");
-        assertThat(response.get(0).foodPicture()).isEqualTo("image-url");
+        assertThat(response.totalCount()).isEqualTo(1);
+        assertThat(response.bookmarks()).hasSize(1);
+        assertThat(response.bookmarks().get(0).foodId()).isEqualTo(FOOD_ID);
+        assertThat(response.bookmarks().get(0).features()).containsExactly("feature-a", "feature-b");
+        assertThat(response.bookmarks().get(0).foodPicture()).isEqualTo("image-url");
     }
 
     private User createUser() {
