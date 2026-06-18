@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -122,15 +123,19 @@ public class BoardService {
     }
 
     private List<String> normalizeImageUrls(List<String> imageUrls) {
-        return imageUrls == null ? List.of() : List.copyOf(imageUrls);
+        if (imageUrls == null) {
+            return new ArrayList<>();
+        }
+
+        return new ArrayList<>(imageUrls);
     }
 
     private List<String> normalizeHashtag(List<String> hashtag) {
         if (hashtag == null) {
-            return List.of();
+            return new ArrayList<>();
         }
 
-        return List.copyOf(hashtag);
+        return new ArrayList<>(hashtag);
     }
 
     private String validateBookmarkedRecipeId(Long userId, String recipeId) {
