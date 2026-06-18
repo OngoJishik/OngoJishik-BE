@@ -51,6 +51,13 @@ public class Board {
     @Column(name = "recipe_id")
     private String recipeId;
 
+    @Convert(converter = StringListJsonConverter.class)
+    @Column(name = "hashtag", nullable = false, columnDefinition = "TEXT")
+    private List<String> hashtag;
+
+    @Column(name = "recipe_id")
+    private String recipeId;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
