@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 class SearchListResponseTest {
 
     @Test
-    void fromWrapsSearches() {
+    void fromWrapsSearchesWithTotalCount() {
         SearchSummaryResponse search = new SearchSummaryResponse(
                 1L,
                 "spicy food",
@@ -18,6 +18,7 @@ class SearchListResponseTest {
 
         SearchListResponse response = SearchListResponse.from(List.of(search));
 
+        assertThat(response.totalCount()).isEqualTo(1);
         assertThat(response.searches()).containsExactly(search);
     }
 }
