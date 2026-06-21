@@ -125,8 +125,7 @@ public class FoodImageGenerationService {
                 nullToEmpty(food.getCategory()),
                 nullToEmpty(food.getFoodFeatures()),
                 nullToEmpty(food.getIngredients()),
-                nullToEmpty(food.getRecipe()),
-                nullToEmpty(food.getHistory())
+                nullToEmpty(food.getRecipe())
         );
     }
 
