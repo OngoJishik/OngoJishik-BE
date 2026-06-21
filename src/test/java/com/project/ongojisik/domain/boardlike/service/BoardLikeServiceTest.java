@@ -108,9 +108,8 @@ class BoardLikeServiceTest {
     }
 
     private Board createBoard(Long boardId, User user) {
-        Board board = Board.create(user, "제목", "내용", java.util.List.of(), BoardCategory.REVIEW);
+        Board board = Board.create(user, "제목", "내용", java.util.List.of(), BoardCategory.REVIEW, java.util.List.of(), null);
         board.assignBoardId(boardId);
-        Board board = Board.create(user, "제목", "내용", null);
         return board;
     }
 }
