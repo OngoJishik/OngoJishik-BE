@@ -32,8 +32,6 @@ public class Food {
     @Column(name = "recipe", columnDefinition = "TEXT")
     private String recipe;
 
-    @Column(name = "history", columnDefinition = "TEXT")
-    private String history;
 
     @Column(name = "doc_nm")
     private String docName;

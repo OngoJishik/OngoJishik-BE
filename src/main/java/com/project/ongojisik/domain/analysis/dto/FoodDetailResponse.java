@@ -16,7 +16,6 @@ public record FoodDetailResponse(
         boolean isBookmarked,
         List<String> ingredients,
         List<RecipeStep> recipeSteps,
-        History history,
         Literature literature,
         String dataSource
 ) {
@@ -34,7 +33,7 @@ public record FoodDetailResponse(
                 isBookmarked,
                 FoodTextUtils.splitComma(food.getIngredients()),
                 createRecipeSteps(food.getRecipe()),
-                new History(defaultString(food.getHistory()), ""),
+//                new History(defaultString(food.getHistory()), ""),
                 new Literature(List.of(Source.from(food))),
                 DATA_SOURCE
         );
