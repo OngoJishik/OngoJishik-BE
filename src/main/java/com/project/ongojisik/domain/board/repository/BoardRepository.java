@@ -217,7 +217,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
                 b.content,
                 b.imageUrls,
                 b.category,
-                b.hashtag,
                 b.recipeId,
                 (select count(bl) from BoardLike bl where bl.board.boardId = b.boardId),
                 (select count(c) from Comment c where c.board.boardId = b.boardId),

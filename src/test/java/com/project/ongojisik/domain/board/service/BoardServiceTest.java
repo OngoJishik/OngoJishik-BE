@@ -54,7 +54,6 @@ class BoardServiceTest {
                 "내용",
                 List.of("image.png"),
                 BoardCategory.REVIEW,
-                List.of("태그"),
                 null
         );
         savedBoard.assignBoardId(10L);
@@ -69,7 +68,6 @@ class BoardServiceTest {
                         "내용",
                         List.of("image.png"),
                         BoardCategory.REVIEW,
-                        List.of("태그"),
                         null
                 )
         );
@@ -103,7 +101,6 @@ class BoardServiceTest {
                         "내용",
                         List.of(),
                         BoardCategory.RECIPE,
-                        List.of(),
                         "123"
                 )
         );
@@ -132,7 +129,6 @@ class BoardServiceTest {
                         "내용",
                         List.of(),
                         BoardCategory.RECIPE,
-                        List.of(),
                         " 김치찌개 "
                 )
         );
@@ -161,7 +157,6 @@ class BoardServiceTest {
                         "내용",
                         List.of(),
                         BoardCategory.RECIPE,
-                        List.of(),
                         "   "
                 )
         );
@@ -183,7 +178,6 @@ class BoardServiceTest {
                 "수정내용",
                 List.of(),
                 BoardCategory.RECIPE,
-                List.of(),
                 "된장찌개",
                 0L,
                 0L,
@@ -202,7 +196,6 @@ class BoardServiceTest {
                         "수정내용",
                         List.of(),
                         BoardCategory.RECIPE,
-                        List.of(),
                         " 된장찌개 "
                 )
         );
@@ -368,7 +361,6 @@ class BoardServiceTest {
                 "내용",
                 List.of(),
                 BoardCategory.QNA,
-                List.of(),
                 "123",
                 4L,
                 6L,
@@ -405,7 +397,6 @@ class BoardServiceTest {
                         "수정내용",
                         List.of(),
                         BoardCategory.RECIPE,
-                        List.of(),
                         "김치찌개"
                 )
         ))
@@ -433,7 +424,7 @@ class BoardServiceTest {
     }
 
     private Board createBoard(Long boardId, User user, String title, BoardCategory category, String recipeId) {
-        Board board = Board.create(user, title, "내용", List.of(), category, List.of(), recipeId);
+        Board board = Board.create(user, title, "내용", List.of(), category, recipeId);
         board.assignBoardId(boardId);
         return board;
     }
