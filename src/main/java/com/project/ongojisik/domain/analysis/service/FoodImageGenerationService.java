@@ -119,7 +119,6 @@ public class FoodImageGenerationService {
             Features: %s
             Ingredients: %s
             Recipe: %s
-            Historical/context notes: %s
             """.formatted(
                 nullToEmpty(food.getFoodName()),
                 nullToEmpty(food.getCategory()),
