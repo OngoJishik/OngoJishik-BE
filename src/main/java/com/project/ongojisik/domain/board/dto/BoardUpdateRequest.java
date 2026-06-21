@@ -13,7 +13,6 @@ public record BoardUpdateRequest(
         List<String> imageUrls,
         @NotNull(message = "게시글 카테고리는 필수입니다.")
         BoardCategory category,
-        List<String> hashtag,
         String recipeId
 ) {
 }

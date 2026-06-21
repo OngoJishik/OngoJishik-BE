@@ -39,7 +39,6 @@ public class BoardService {
                 request.content(),
                 normalizeImageUrls(request.imageUrls()),
                 request.category(),
-                normalizeHashtag(request.hashtag()),
                 recipeId
         );
         Board savedBoard = boardRepository.save(board);
@@ -95,7 +94,6 @@ public class BoardService {
                 request.content(),
                 normalizeImageUrls(request.imageUrls()),
                 request.category(),
-                normalizeHashtag(request.hashtag()),
                 recipeId
         );
         return boardRepository.findResponseByIdWithCounts(userId, boardId)
@@ -125,14 +123,6 @@ public class BoardService {
         }
 
         return new ArrayList<>(imageUrls);
-    }
-
-    private List<String> normalizeHashtag(List<String> hashtag) {
-        if (hashtag == null) {
-            return new ArrayList<>();
-        }
-
-        return new ArrayList<>(hashtag);
     }
 
     private String normalizeRecipeId(String recipeId) {
