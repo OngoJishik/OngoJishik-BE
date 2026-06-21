@@ -4,6 +4,7 @@ import com.project.ongojisik.domain.analysis.dto.FoodSummaryResponse;
 import com.project.ongojisik.domain.analysis.dto.RecommendResponse;
 import com.project.ongojisik.domain.analysis.entity.Food;
 import com.project.ongojisik.domain.analysis.repository.FoodRepository;
+import com.project.ongojisik.domain.analysis.service.ImageGenerationJobService;
 import com.project.ongojisik.domain.analysis.service.RecommendService;
 import com.project.ongojisik.domain.search.dto.SearchListResponse;
 import com.project.ongojisik.domain.search.dto.SearchResponse;
@@ -30,6 +31,7 @@ public class SearchService {
     private final UserRepository userRepository;
     private final FoodRepository foodRepository;
     private final RecommendService recommendService;
+    private final ImageGenerationJobService imageGenerationJobService;
 
     @Transactional
     public SearchResponse search(Long userId, String rawQuery) {
@@ -72,7 +74,7 @@ public class SearchService {
         return SearchListResponse.from(searches);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public SearchResponse getRecentSearchResult(Long userId, Long searchId) {
         SearchHistory searchHistory = findSearchHistory(userId, searchId);
         List<FoodSummaryResponse> recommendations = findRecommendationsInSavedOrder(searchHistory);
@@ -99,7 +101,10 @@ public class SearchService {
         return savedFoodIds.stream()
                 .filter(foodById::containsKey)
                 .map(foodById::get)
-                .map(FoodSummaryResponse::from)
+                .map(food -> FoodSummaryResponse.from(
+                        food,
+                        imageGenerationJobService.requestImageGenerationIfNeeded(food)
+                ))
                 .toList();
     }
 

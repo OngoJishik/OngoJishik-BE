@@ -29,6 +29,7 @@ public enum ErrorCode {
     USER_NOT_FOUND(404, "USER_NOT_FOUND", "해당 사용자를 찾을 수 없습니다."),
     BOARD_NOT_FOUND(404, "BOARD_NOT_FOUND", "게시글을 찾을 수 없습니다."),
     FOOD_NOT_FOUND(404, "FOOD_NOT_FOUND", "음식 정보를 찾을 수 없습니다."),
+    IMAGE_GENERATION_JOB_NOT_FOUND(404, "IMAGE_GENERATION_JOB_NOT_FOUND", "이미지 생성 작업을 찾을 수 없습니다."),
     SEARCH_HISTORY_NOT_FOUND(404, "SEARCH_HISTORY_NOT_FOUND", "검색 기록을 찾을 수 없습니다."),
     BOOKMARK_NOT_FOUND(404, "BOOKMARK_NOT_FOUND", "즐겨찾기한 게시글을 찾을 수 없습니다."),
     COMMENT_NOT_FOUND(404, "COMMENT_NOT_FOUND", "댓글을 찾을 수 없습니다."),

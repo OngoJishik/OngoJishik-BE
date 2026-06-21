@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import com.project.ongojisik.domain.analysis.entity.Food;
 import com.project.ongojisik.domain.analysis.repository.FoodRepository;
+import com.project.ongojisik.domain.analysis.service.ImageGenerationJobService;
 import com.project.ongojisik.domain.analysis.service.RecommendService;
 import com.project.ongojisik.domain.search.dto.SearchResponse;
 import com.project.ongojisik.domain.search.entity.SearchHistory;
@@ -37,6 +38,9 @@ class SearchServiceTest {
     @Mock
     private RecommendService recommendService;
 
+    @Mock
+    private ImageGenerationJobService imageGenerationJobService;
+
     private SearchService searchService;
 
     @BeforeEach
@@ -45,7 +49,8 @@ class SearchServiceTest {
                 searchHistoryRepository,
                 userRepository,
                 foodRepository,
-                recommendService
+                recommendService,
+                imageGenerationJobService
         );
     }
 
