@@ -44,10 +44,6 @@ public class Board {
     @Column(name = "category", nullable = false)
     private BoardCategory category;
 
-    @Convert(converter = StringListJsonConverter.class)
-    @Column(name = "hashtag", nullable = false, columnDefinition = "TEXT")
-    private List<String> hashtag;
-
     @Column(name = "recipe_id")
     private String recipeId;
 
@@ -61,7 +57,7 @@ public class Board {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    private Board(User user, String title, String content, List<String> imageUrls, BoardCategory category, List<String> hashtag, String recipeId, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    private Board(User user, String title, String content, List<String> imageUrls, BoardCategory category, String recipeId, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.user = user;
         this.title = title;
         this.content = content;
@@ -71,22 +67,17 @@ public class Board {
             this.imageUrls = new ArrayList<>(imageUrls);
         }
         this.category = category;
-        if (hashtag == null) {
-            this.hashtag = new ArrayList<>();
-        } else {
-            this.hashtag = new ArrayList<>(hashtag);
-        }
         this.recipeId = recipeId;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
 
-    public static Board create(User user, String title, String content, List<String> imageUrls, BoardCategory category, List<String> hashtag, String recipeId) {
+    public static Board create(User user, String title, String content, List<String> imageUrls, BoardCategory category, String recipeId) {
         LocalDateTime now = LocalDateTime.now();
-        return new Board(user, title, content, imageUrls, category, hashtag, recipeId, now, now);
+        return new Board(user, title, content, imageUrls, category, recipeId, now, now);
     }
 
-    public void update(String title, String content, List<String> imageUrls, BoardCategory category, List<String> hashtag, String recipeId) {
+    public void update(String title, String content, List<String> imageUrls, BoardCategory category, String recipeId) {
         this.title = title;
         this.content = content;
         if (imageUrls == null) {
@@ -95,11 +86,6 @@ public class Board {
             this.imageUrls = new ArrayList<>(imageUrls);
         }
         this.category = category;
-        if (hashtag == null) {
-            this.hashtag = new ArrayList<>();
-        } else {
-            this.hashtag = new ArrayList<>(hashtag);
-        }
         this.recipeId = recipeId;
         this.updatedAt = LocalDateTime.now();
     }

@@ -38,7 +38,7 @@ public class BoardController {
 
     private final BoardService boardService;
 
-    @Operation(summary = "게시글 작성", description = "로그인한 사용자가 게시글을 작성합니다. hashtag는 사용자 입력 문자열 목록이며, recipeId를 전달하면 해당 사용자가 북마크한 음식 ID를 게시글에 저장합니다.")
+    @Operation(summary = "게시글 작성", description = "로그인한 사용자가 게시글을 작성합니다. recipeId에는 음식 ID 또는 사용자 입력 문자열을 저장할 수 있습니다.")
     @PostMapping
     public ApiResponse<BoardResponse> createBoard(
             @AuthenticationPrincipal String userId,
@@ -136,7 +136,7 @@ public class BoardController {
         );
     }
 
-    @Operation(summary = "게시글 수정", description = "작성자만 게시글을 수정합니다. hashtag는 사용자 입력 문자열 목록이며, recipeId를 전달하면 해당 사용자가 북마크한 음식 ID를 게시글에 저장합니다.")
+    @Operation(summary = "게시글 수정", description = "작성자만 게시글을 수정합니다. recipeId에는 음식 ID 또는 사용자 입력 문자열을 저장할 수 있습니다.")
     @PatchMapping("/{boardId}")
     public ApiResponse<BoardResponse> updateBoard(
             @AuthenticationPrincipal String userId,
