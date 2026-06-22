@@ -27,7 +27,7 @@ public class RecommendService {
     private final FoodRepository foodRepository;
     private final FeatureExtractor featureExtractor;
     private final BookmarkRepository bookmarkRepository;
-    private final FoodImageGenerationService foodImageGenerationService;
+    private final ImageGenerationJobService imageGenerationJobService;
 
     public RecommendResponse recommend(String query) {
         if (query == null || query.isBlank()) {
@@ -48,8 +48,10 @@ public class RecommendService {
         }
 
         List<FoodSummaryResponse> recommendations = recommendedFoods.stream()
-                .peek(foodImageGenerationService::generateAndStoreImageIfNeeded)
-                .map(FoodSummaryResponse::from)
+                .map(food -> FoodSummaryResponse.from(
+                        food,
+                        imageGenerationJobService.requestImageGenerationIfNeeded(food)
+                ))
                 .toList();
 
         return new RecommendResponse(query, extractionResult.searchTerms(), recommendations);

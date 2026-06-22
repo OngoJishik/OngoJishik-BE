@@ -1,7 +1,9 @@
 package com.project.ongojisik.domain.analysis.controller;
 
 import com.project.ongojisik.domain.analysis.dto.FoodDetailResponse;
+import com.project.ongojisik.domain.analysis.dto.ImageGenerationJobResponse;
 import com.project.ongojisik.domain.analysis.dto.RecommendRequest;
+import com.project.ongojisik.domain.analysis.service.ImageGenerationJobService;
 import com.project.ongojisik.domain.analysis.service.RecommendService;
 import com.project.ongojisik.domain.search.dto.SearchResponse;
 import com.project.ongojisik.domain.search.service.SearchService;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class RecommendController {
     private final RecommendService recommendService;
     private final SearchService searchService;
+    private final ImageGenerationJobService imageGenerationJobService;
 
     @Operation(
             summary = "음식 추천 결과 조회",
@@ -52,5 +55,16 @@ public class RecommendController {
                 "음식 상세 정보 조회에 성공했습니다.",
                 recommendService.getFoodDetail(Long.valueOf(userId), foodId)
         );
+    }
+
+    @Operation(
+            summary = "이미지 생성 작업 상태 조회",
+            description = "추천 응답에 포함된 imageJobId로 이미지 생성 완료 여부를 조회합니다."
+    )
+    @GetMapping("/image-jobs/{jobId}")
+    public ApiResponse<ImageGenerationJobResponse> getImageGenerationJob(
+            @PathVariable Long jobId
+    ) {
+        return ApiResponse.success(imageGenerationJobService.getJob(jobId));
     }
 }
