@@ -2,11 +2,13 @@ package com.project.ongojisik.domain.analysis.llm;
 
 import com.project.ongojisik.global.exception.APIException;
 import com.project.ongojisik.global.exception.ErrorCode;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import tools.jackson.databind.ObjectMapper;
 
 @Component
 @RequiredArgsConstructor
@@ -15,6 +17,7 @@ public class GeminiFeatureExtractor implements FeatureExtractor {
 
     private final ChatClient foodFeatureChatClient;
     private final FeatureTaxonomyCatalog taxonomyCatalog;
+    private final ObjectMapper objectMapper;
 
     @Override
     public FeatureExtractionResult extract(String query) {
@@ -23,7 +26,7 @@ public class GeminiFeatureExtractor implements FeatureExtractor {
         }
 
         try {
-            FeatureExtractionResult result = foodFeatureChatClient.prompt()
+            String content = foodFeatureChatClient.prompt()
                     .system("""
                 너는 전통 음식 추천 서비스의 음식 특징 추출기다.
 
@@ -48,6 +51,9 @@ public class GeminiFeatureExtractor implements FeatureExtractor {
                 - categories에는 taxonomy.categories[*].label에 있는 값만 넣는다.
                 - label이 아닌 id, description, 임의 설명은 출력하지 않는다.
                 - JSON 외의 설명, 마크다운, 코드 블록은 출력하지 않는다.
+                - 응답의 첫 글자는 반드시 { 이고 마지막 글자는 반드시 } 이어야 한다.
+                - ```json 같은 마크다운 코드 펜스를 절대 사용하지 않는다.
+                - 출력 예시: {"features":[],"categories":[]}
                 """)
                     .user(user -> user
                             .text("""
@@ -71,7 +77,8 @@ public class GeminiFeatureExtractor implements FeatureExtractor {
                             .param("query", query)
                             .param("taxonomy", taxonomyCatalog.promptCatalog()))
                     .call()
-                    .entity(FeatureExtractionResult.class, ChatClient.EntityParamSpec::validateSchema);
+                    .content();
+            FeatureExtractionResult result = parseResponse(content);
             if (result == null) {
                 throw new APIException(ErrorCode.LLM_INVALID_RESPONSE);
             }
@@ -80,9 +87,39 @@ public class GeminiFeatureExtractor implements FeatureExtractor {
             return result;
         } catch (APIException exception) {
             throw exception;
+        } catch (IOException exception) {
+            log.error("Gemini feature extraction response is not valid JSON", exception);
+            throw new APIException(ErrorCode.LLM_INVALID_RESPONSE, exception);
         } catch (RuntimeException exception) {
             log.error("Gemini feature extraction request failed", exception);
             throw new APIException(ErrorCode.LLM_REQUEST_FAILED, exception);
         }
+    }
+
+    private FeatureExtractionResult parseResponse(String content) throws IOException {
+        if (!StringUtils.hasText(content)) {
+            throw new APIException(ErrorCode.LLM_INVALID_RESPONSE);
+        }
+
+        String cleanedContent = removeMarkdownCodeFence(content.trim());
+        return objectMapper.readValue(cleanedContent, FeatureExtractionResult.class);
+    }
+
+    private String removeMarkdownCodeFence(String content) {
+        if (!content.startsWith("```")) {
+            return content;
+        }
+
+        int firstLineEnd = content.indexOf('\n');
+        if (firstLineEnd < 0) {
+            return "";
+        }
+
+        String withoutOpeningFence = content.substring(firstLineEnd + 1).trim();
+        if (withoutOpeningFence.endsWith("```")) {
+            return withoutOpeningFence.substring(0, withoutOpeningFence.length() - 3).trim();
+        }
+
+        return withoutOpeningFence;
     }
 }
