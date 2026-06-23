@@ -14,7 +14,10 @@ import com.project.ongojisik.global.exception.ErrorCode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,14 +40,9 @@ public class RecommendService {
         FeatureExtractionResult extractionResult = featureExtractor.extract(query);
         List<Food> foods = foodRepository.findAll();
 
-        List<Food> recommendedFoods;
-        if (extractionResult.searchTerms().isEmpty()) {
+        List<Food> recommendedFoods = selectMatchedRecommendations(query, extractionResult, foods);
+        if (recommendedFoods.isEmpty()) {
             recommendedFoods = selectFallbackRecommendations(foods);
-        } else {
-            recommendedFoods = selectMatchedRecommendations(extractionResult, foods);
-            if (recommendedFoods.isEmpty()) {
-                recommendedFoods = selectFallbackRecommendations(foods);
-            }
         }
 
         List<FoodSummaryResponse> recommendations = recommendedFoods.stream()
@@ -67,6 +65,7 @@ public class RecommendService {
     }
 
     private List<Food> selectMatchedRecommendations(
+            String query,
             FeatureExtractionResult extractionResult,
             List<Food> foods
     ) {
@@ -77,12 +76,17 @@ public class RecommendService {
                                 extractionResult.features(),
                                 FoodTextUtils.splitComma(food.getFoodFeatures())
                         ),
-                        extractionResult.categories().contains(food.getCategory())
+                        extractionResult.categories().contains(food.getCategory()),
+                        isFoodNameIncludedInQuery(query, food)
                 ))
-                .filter(result -> result.featureMatchCount() > 0 || result.categoryMatched())
-                .sorted(Comparator.comparingInt(FoodScore::featureMatchCount).reversed()
+                .filter(result -> result.foodNameMatched()
+                        || result.featureMatchCount() > 0
+                        || result.categoryMatched())
+                .sorted(Comparator.comparing(FoodScore::foodNameMatched, Comparator.reverseOrder())
+                        .thenComparing(Comparator.comparingInt(FoodScore::featureMatchCount).reversed())
                         .thenComparing(FoodScore::categoryMatched, Comparator.reverseOrder())
                         .thenComparing(result -> result.food().getFoodId()))
+                .filter(distinctByFoodName())
                 .limit(3)
                 .map(FoodScore::food)
                 .toList();
@@ -92,8 +96,19 @@ public class RecommendService {
         List<Food> shuffledFoods = new ArrayList<>(foods);
         Collections.shuffle(shuffledFoods);
         return shuffledFoods.stream()
+                .filter(distinctFoodByName())
                 .limit(3)
                 .toList();
+    }
+
+    private Predicate<FoodScore> distinctByFoodName() {
+        Set<String> foodNames = new HashSet<>();
+        return foodScore -> foodNames.add(foodScore.food().getFoodName());
+    }
+
+    private Predicate<Food> distinctFoodByName() {
+        Set<String> foodNames = new HashSet<>();
+        return food -> foodNames.add(food.getFoodName());
     }
 
     private int countMatchedFeatures(
@@ -105,10 +120,16 @@ public class RecommendService {
                 .count();
     }
 
+    private boolean isFoodNameIncludedInQuery(String query, Food food) {
+        String foodName = food.getFoodName();
+        return foodName != null && !foodName.isBlank() && query.contains(foodName);
+    }
+
     private record FoodScore(
             Food food,
             int featureMatchCount,
-            boolean categoryMatched
+            boolean categoryMatched,
+            boolean foodNameMatched
     ) {
     }
 }
