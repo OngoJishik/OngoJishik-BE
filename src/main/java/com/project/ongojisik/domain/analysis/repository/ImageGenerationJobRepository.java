@@ -13,4 +13,9 @@ public interface ImageGenerationJobRepository extends JpaRepository<ImageGenerat
             String foodId,
             Collection<ImageGenerationStatus> statuses
     );
+
+    Optional<ImageGenerationJob> findFirstByFoodFoodNameAndStatusInOrderByCreatedAtDesc(
+            String foodName,
+            Collection<ImageGenerationStatus> statuses
+    );
 }

@@ -3,6 +3,7 @@ package com.project.ongojisik.domain.analysis.service;
 import com.project.ongojisik.domain.analysis.entity.Food;
 import com.project.ongojisik.domain.analysis.entity.ImageGenerationJob;
 import com.project.ongojisik.domain.analysis.entity.ImageGenerationStatus;
+import com.project.ongojisik.domain.analysis.repository.FoodRepository;
 import com.project.ongojisik.domain.analysis.repository.ImageGenerationJobRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 public class ImageGenerationWorker {
 
+    private final FoodRepository foodRepository;
     private final ImageGenerationJobRepository imageGenerationJobRepository;
     private final FoodImageGenerationService foodImageGenerationService;
 
@@ -37,11 +39,21 @@ public class ImageGenerationWorker {
                 job.markFailed("Image generation did not return an image URL.");
                 return;
             }
+            updateFoodsWithSameName(food.getFoodName(), imageUrl);
             job.markCompleted(imageUrl);
         } catch (Exception exception) {
             // 예외를 밖으로 던지지 않고 FAILED로 저장해 polling 클라이언트가 종료 상태를 받을 수 있게 한다.
             log.error("Failed to process image generation job: jobId={}", jobId, exception);
             job.markFailed(exception.getMessage());
         }
+    }
+
+    private void updateFoodsWithSameName(String foodName, String imageUrl) {
+        if (!StringUtils.hasText(foodName) || !StringUtils.hasText(imageUrl)) {
+            return;
+        }
+
+        foodRepository.findByFoodName(foodName)
+                .forEach(food -> food.updateFoodPicture(imageUrl));
     }
 }
