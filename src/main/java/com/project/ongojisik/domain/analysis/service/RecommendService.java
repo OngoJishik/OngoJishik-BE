@@ -14,7 +14,10 @@ import com.project.ongojisik.global.exception.ErrorCode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,6 +86,7 @@ public class RecommendService {
                 .sorted(Comparator.comparingInt(FoodScore::featureMatchCount).reversed()
                         .thenComparing(FoodScore::categoryMatched, Comparator.reverseOrder())
                         .thenComparing(result -> result.food().getFoodId()))
+                .filter(distinctByFoodName())
                 .limit(3)
                 .map(FoodScore::food)
                 .toList();
@@ -92,8 +96,19 @@ public class RecommendService {
         List<Food> shuffledFoods = new ArrayList<>(foods);
         Collections.shuffle(shuffledFoods);
         return shuffledFoods.stream()
+                .filter(distinctFoodByName())
                 .limit(3)
                 .toList();
+    }
+
+    private Predicate<FoodScore> distinctByFoodName() {
+        Set<String> foodNames = new HashSet<>();
+        return foodScore -> foodNames.add(foodScore.food().getFoodName());
+    }
+
+    private Predicate<Food> distinctFoodByName() {
+        Set<String> foodNames = new HashSet<>();
+        return food -> foodNames.add(food.getFoodName());
     }
 
     private int countMatchedFeatures(

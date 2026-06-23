@@ -75,6 +75,35 @@ class RecommendServiceTest {
     }
 
     @Test
+    void removesDuplicateFoodNamesFromMatchedRecommendations() {
+        Food bestDuplicate = food("1", "same-food", "target-category", "feature-a,feature-b");
+        Food lowerDuplicate = food("2", "same-food", "target-category", "feature-a");
+        Food secondFood = food("3", "second-food", "target-category", "feature-a");
+        Food thirdFood = food("4", "third-food", "target-category", "feature-a");
+
+        when(featureExtractor.extract("duplicate query"))
+                .thenReturn(new FeatureExtractionResult(
+                        List.of("feature-a", "feature-b"),
+                        List.of("target-category")
+                ));
+        when(foodRepository.findAll()).thenReturn(List.of(
+                lowerDuplicate,
+                thirdFood,
+                bestDuplicate,
+                secondFood
+        ));
+
+        RecommendResponse response = recommendService.recommend("duplicate query");
+
+        assertThat(response.recommendations())
+                .extracting(FoodSummaryResponse::foodId)
+                .containsExactly("1", "3", "4");
+        assertThat(response.recommendations())
+                .extracting(FoodSummaryResponse::foodName)
+                .doesNotHaveDuplicates();
+    }
+
+    @Test
     void recommendsCategoryMatchesWhenOnlyCategoryIsExtracted() {
         Food categoryMatch = food("1", "food-1", "target-category", "feature-a");
         Food noMatch = food("2", "food-2", "other-category", "feature-b");
@@ -112,6 +141,27 @@ class RecommendServiceTest {
                 .extracting(FoodSummaryResponse::foodId)
                 .doesNotHaveDuplicates()
                 .isSubsetOf("1", "2", "3", "4");
+    }
+
+    @Test
+    void removesDuplicateFoodNamesFromFallbackRecommendations() {
+        List<Food> foods = List.of(
+                food("1", "same-food", "category-1", "feature-1"),
+                food("2", "same-food", "category-2", "feature-2"),
+                food("3", "second-food", "category-3", "feature-3"),
+                food("4", "third-food", "category-4", "feature-4"),
+                food("5", "fourth-food", "category-5", "feature-5")
+        );
+        when(featureExtractor.extract("anything"))
+                .thenReturn(new FeatureExtractionResult(List.of(), List.of()));
+        when(foodRepository.findAll()).thenReturn(foods);
+
+        RecommendResponse response = recommendService.recommend("anything");
+
+        assertThat(response.recommendations())
+                .hasSize(3)
+                .extracting(FoodSummaryResponse::foodName)
+                .doesNotHaveDuplicates();
     }
 
     @Test
