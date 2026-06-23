@@ -40,14 +40,9 @@ public class RecommendService {
         FeatureExtractionResult extractionResult = featureExtractor.extract(query);
         List<Food> foods = foodRepository.findAll();
 
-        List<Food> recommendedFoods;
-        if (extractionResult.searchTerms().isEmpty()) {
+        List<Food> recommendedFoods = selectMatchedRecommendations(query, extractionResult, foods);
+        if (recommendedFoods.isEmpty()) {
             recommendedFoods = selectFallbackRecommendations(foods);
-        } else {
-            recommendedFoods = selectMatchedRecommendations(extractionResult, foods);
-            if (recommendedFoods.isEmpty()) {
-                recommendedFoods = selectFallbackRecommendations(foods);
-            }
         }
 
         List<FoodSummaryResponse> recommendations = recommendedFoods.stream()
@@ -70,6 +65,7 @@ public class RecommendService {
     }
 
     private List<Food> selectMatchedRecommendations(
+            String query,
             FeatureExtractionResult extractionResult,
             List<Food> foods
     ) {
@@ -80,10 +76,14 @@ public class RecommendService {
                                 extractionResult.features(),
                                 FoodTextUtils.splitComma(food.getFoodFeatures())
                         ),
-                        extractionResult.categories().contains(food.getCategory())
+                        extractionResult.categories().contains(food.getCategory()),
+                        isFoodNameIncludedInQuery(query, food)
                 ))
-                .filter(result -> result.featureMatchCount() > 0 || result.categoryMatched())
-                .sorted(Comparator.comparingInt(FoodScore::featureMatchCount).reversed()
+                .filter(result -> result.foodNameMatched()
+                        || result.featureMatchCount() > 0
+                        || result.categoryMatched())
+                .sorted(Comparator.comparing(FoodScore::foodNameMatched, Comparator.reverseOrder())
+                        .thenComparing(Comparator.comparingInt(FoodScore::featureMatchCount).reversed())
                         .thenComparing(FoodScore::categoryMatched, Comparator.reverseOrder())
                         .thenComparing(result -> result.food().getFoodId()))
                 .filter(distinctByFoodName())
@@ -120,10 +120,16 @@ public class RecommendService {
                 .count();
     }
 
+    private boolean isFoodNameIncludedInQuery(String query, Food food) {
+        String foodName = food.getFoodName();
+        return foodName != null && !foodName.isBlank() && query.contains(foodName);
+    }
+
     private record FoodScore(
             Food food,
             int featureMatchCount,
-            boolean categoryMatched
+            boolean categoryMatched,
+            boolean foodNameMatched
     ) {
     }
 }

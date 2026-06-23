@@ -104,6 +104,46 @@ class RecommendServiceTest {
     }
 
     @Test
+    void prioritizesFoodNameIncludedInQueryOverFeatureScore() {
+        Food nameMatch = food("1", "named-food", "other-category", "feature-a");
+        Food higherFeatureMatch = food("2", "higher-feature-food", "target-category", "feature-a,feature-b");
+        Food anotherMatch = food("3", "another-food", "target-category", "feature-a");
+
+        when(featureExtractor.extract("named-food please"))
+                .thenReturn(new FeatureExtractionResult(
+                        List.of("feature-a", "feature-b"),
+                        List.of("target-category")
+                ));
+        when(foodRepository.findAll()).thenReturn(List.of(
+                higherFeatureMatch,
+                anotherMatch,
+                nameMatch
+        ));
+
+        RecommendResponse response = recommendService.recommend("named-food please");
+
+        assertThat(response.recommendations())
+                .extracting(FoodSummaryResponse::foodId)
+                .containsExactly("1", "2", "3");
+    }
+
+    @Test
+    void recommendsFoodNameIncludedInQueryEvenWhenExtractionIsEmpty() {
+        Food nameMatch = food("1", "named-food", "category-1", "feature-1");
+        Food otherFood = food("2", "other-food", "category-2", "feature-2");
+
+        when(featureExtractor.extract("named-food"))
+                .thenReturn(new FeatureExtractionResult(List.of(), List.of()));
+        when(foodRepository.findAll()).thenReturn(List.of(otherFood, nameMatch));
+
+        RecommendResponse response = recommendService.recommend("named-food");
+
+        assertThat(response.recommendations())
+                .extracting(FoodSummaryResponse::foodId)
+                .containsExactly("1");
+    }
+
+    @Test
     void recommendsCategoryMatchesWhenOnlyCategoryIsExtracted() {
         Food categoryMatch = food("1", "food-1", "target-category", "feature-a");
         Food noMatch = food("2", "food-2", "other-category", "feature-b");
