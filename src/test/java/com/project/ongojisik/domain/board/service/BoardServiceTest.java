@@ -3,6 +3,7 @@ package com.project.ongojisik.domain.board.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -13,6 +14,8 @@ import com.project.ongojisik.domain.board.dto.BoardUpdateRequest;
 import com.project.ongojisik.domain.board.entity.Board;
 import com.project.ongojisik.domain.board.entity.BoardCategory;
 import com.project.ongojisik.domain.board.repository.BoardRepository;
+import com.project.ongojisik.domain.boardlike.repository.BoardLikeRepository;
+import com.project.ongojisik.domain.comment.repository.CommentRepository;
 import com.project.ongojisik.domain.user.entity.User;
 import com.project.ongojisik.domain.user.repository.UserRepository;
 import com.project.ongojisik.global.exception.APIException;
@@ -23,6 +26,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
@@ -38,11 +42,17 @@ class BoardServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private CommentRepository commentRepository;
+
+    @Mock
+    private BoardLikeRepository boardLikeRepository;
+
     private BoardService boardService;
 
     @BeforeEach
     void setUp() {
-        boardService = new BoardService(boardRepository, userRepository);
+        boardService = new BoardService(boardRepository, userRepository, commentRepository, boardLikeRepository);
     }
 
     @Test
@@ -414,7 +424,10 @@ class BoardServiceTest {
 
         boardService.deleteBoard(1L, 10L);
 
-        verify(boardRepository).delete(board);
+        InOrder inOrder = inOrder(commentRepository, boardLikeRepository, boardRepository);
+        inOrder.verify(commentRepository).deleteByBoardBoardId(10L);
+        inOrder.verify(boardLikeRepository).deleteByBoardBoardId(10L);
+        inOrder.verify(boardRepository).delete(board);
     }
 
     private User createUser(Long userId, String nickname) {

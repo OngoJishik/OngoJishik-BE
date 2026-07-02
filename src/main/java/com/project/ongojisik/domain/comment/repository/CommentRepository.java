@@ -4,6 +4,7 @@ import com.project.ongojisik.domain.comment.entity.Comment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -38,4 +39,11 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             @Param("userId") Long userId,
             Pageable pageable
     );
+
+    @Modifying(clearAutomatically = true)
+    @Query("""
+            delete from Comment c
+            where c.board.boardId = :boardId
+            """)
+    void deleteByBoardBoardId(@Param("boardId") Long boardId);
 }
