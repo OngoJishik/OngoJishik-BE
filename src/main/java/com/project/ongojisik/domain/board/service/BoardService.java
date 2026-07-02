@@ -7,6 +7,8 @@ import com.project.ongojisik.domain.board.dto.BoardUpdateRequest;
 import com.project.ongojisik.domain.board.entity.Board;
 import com.project.ongojisik.domain.board.entity.BoardCategory;
 import com.project.ongojisik.domain.board.repository.BoardRepository;
+import com.project.ongojisik.domain.boardlike.repository.BoardLikeRepository;
+import com.project.ongojisik.domain.comment.repository.CommentRepository;
 import com.project.ongojisik.domain.user.entity.User;
 import com.project.ongojisik.domain.user.repository.UserRepository;
 import com.project.ongojisik.global.exception.APIException;
@@ -26,6 +28,8 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
+    private final BoardLikeRepository boardLikeRepository;
 
     private static final int POPULAR_BOARD_LIMIT = 5;
 
@@ -104,6 +108,8 @@ public class BoardService {
     public void deleteBoard(Long userId, Long boardId) {
         Board board = findBoard(boardId);
         validateBoardOwner(board, userId);
+        commentRepository.deleteByBoardBoardId(boardId);
+        boardLikeRepository.deleteByBoardBoardId(boardId);
         boardRepository.delete(board);
     }
 
