@@ -16,7 +16,7 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          command_timeout: 10m
+          command_timeout: 30m
           script: |
             set -e
 
@@ -33,10 +33,9 @@ jobs:
             ./gradlew clean bootJar -x test --no-daemon
 
             sudo systemctl restart ongojisik
-            sudo systemctl status ongojisik --no-pager
 
             echo "애플리케이션 기동 확인"
-            for i in {1..30}; do
+            for i in {1..60}; do
               if curl -fsS http://localhost:8080/swagger-ui.html > /dev/null; then
                 echo "애플리케이션 기동 성공"
                 exit 0
