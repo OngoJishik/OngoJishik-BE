@@ -10,51 +10,40 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 레포지토리 가져오기
-        uses: actions/checkout@v4
-
-      - name: JDK 17 설치
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: gradlew 권한 부여
-        run: chmod +x gradlew
-
-      - name: 프로젝트 빌드
-        run: ./gradlew clean bootJar -x test --no-daemon
-
-      - name: EC2 기존 jar 정리
+      - name: EC2 배포
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          command_timeout: 10m
           script: |
             set -e
 
-            mkdir -p /home/ubuntu/OngoJishik-BE/build/libs
-            rm -f /home/ubuntu/OngoJishik-BE/build/libs/*.jar
+            cd /home/ubuntu/OngoJishik-BE
 
-      - name: jar 파일 EC2 업로드
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: "build/libs/*.jar"
-          target: "/home/ubuntu/OngoJishik-BE"
+            git fetch origin main
+            git switch main
+            git reset --hard origin/main
 
-      - name: EC2 애플리케이션 재시작
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          command_timeout: 5m
-          script: |
-            set -e
+            echo "배포 커밋 확인"
+            git log -1 --oneline
+
+            chmod +x gradlew
+            ./gradlew clean bootJar -x test --no-daemon
 
             sudo systemctl restart ongojisik
             sudo systemctl status ongojisik --no-pager
+
+            echo "애플리케이션 기동 확인"
+            for i in {1..30}; do
+              if curl -fsS http://localhost:8080/swagger-ui.html > /dev/null; then
+                echo "애플리케이션 기동 성공"
+                exit 0
+              fi
+              sleep 5
+            done
+
+            echo "애플리케이션 기동 실패 로그"
+            sudo journalctl -u ongojisik -n 100 --no-pager
+            exit 1
